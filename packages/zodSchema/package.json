@@ -1,0 +1,20 @@
+{
+  "name": "@repo/zodschema",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./index.ts"
+    }
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}

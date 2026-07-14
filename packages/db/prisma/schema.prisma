@@ -20,9 +20,25 @@ enum Role {
 model User {
   id        String @id @default(uuid())
   email     String @unique
-  username  String
+  username  String @unique  
   firstName String
-  lastName  String
+  lastName  String?
   password  String
   role      Role
+  emailVerified   Boolean  @default(false)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  otpVerification OTPVerification?
+}
+
+
+model OTPVerification {
+  id         String   @id @default(cuid())
+  otpHash    String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  userId      String   @unique
+  user        User     @relation(fields:[userId], references:[id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
