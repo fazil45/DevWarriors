@@ -13,23 +13,25 @@ enum Role {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  username        String           @unique
-  firstName       String
-  lastName        String?
-  password        String
-  role            Role
-  leaderboard     Leaderboard[]
-  emailVerified   Boolean          @default(false)
-  emailVerifiedAt DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  otpVerification OTPVerification?
+  id                String           @id @default(uuid())
+  email             String           @unique
+  username          String           @unique
+  firstName         String
+  lastName          String?
+  password          String
+  role              Role
+  leaderboard       Leaderboard[]
+  emailVerified     Boolean          @default(false)
+  emailVerifiedAt   DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  otpVerification   OTPVerification?
+  submission        Submission[]
+  contestSubmission ContestSubmission[]
 }
 
 model OTPVerification {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   otpHash   String
   expiresAt DateTime
   attempts  Int      @default(0)
@@ -53,6 +55,7 @@ model Challenge {
   contestId                 String
   maxPoints                 Int
   contestToChallengeMapping ContestToChallengeMapping[]
+  submissions               Submission[]
 }
 
 model ContestToChallengeMapping {
@@ -60,29 +63,42 @@ model ContestToChallengeMapping {
   contestId   String
   challengeId String
   index       Int
-  submissions Submission[]
+  ContestSubmission     ContestSubmission[]
   contest     Contest      @relation(fields: [contestId], references: [id])
   challenge   Challenge    @relation(fields: [challengeId], references: [id])
 
   @@unique([contestId, challengeId])
 }
 
-model Submission {
-  id                            String                      @id @default(uuid())
-  contestId                     String
-  challengeId                   String
-  points                        Int
+model ContestSubmission {
+  id                            String       @id       @default(uuid())
+  submission                    String
   contestToChallengeMappingId   String
-  createdAt                     DateTime                    @default(now())
+  userId                        String
+  user                          User                        @relation(fields: [userId], references: [id])
+  points                        Int
   contestToChallengeMapping     ContestToChallengeMapping   @relation(fields: [contestToChallengeMappingId], references: [id])
+  createdAt                     DateTime      @default(now())
+}
+
+model Submission {
+  id                            String       @id       @default(uuid())
+  submission                    String
+  challengeId   String
+  userId                        String
+  user                          User                        @relation(fields: [userId], references: [id])
+  points                        Int
+  challenge                     Challenge   @relation(fields: [challengeId], references: [id])
+  createdAt                     DateTime      @default(now())
 }
 
 model Leaderboard {
-  id        String      @id @default(uuid())
+  id        String  @id @default(uuid())
   contestId String
   userId    String
   rank      Int
-  contest   Contest     @relation(fields: [contestId], references: [id])
-  user      User        @relation(fields: [userId], references: [id])
+  contest   Contest @relation(fields: [contestId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
   @@unique([contestId, rank])
 }

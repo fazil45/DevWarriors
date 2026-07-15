@@ -7,9 +7,9 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Prisma, prisma } from "@repo/db/client";
-import { generateOTP } from "./utils/generateOtp";
-import { hashOTP } from "./utils/hashOtp";
-import { sendOtp } from "./utils/sendOtp";
+import { generateOTP } from "../utils/generateOtp";
+import { hashOTP } from "../utils/hashOtp";
+import { sendOtp } from "../utils/sendOtp";
 import {  JWT_SECRET } from "../config/index";
 import { CookieOption } from "../config/cookie-config";
 

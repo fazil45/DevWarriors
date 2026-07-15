@@ -12,30 +12,41 @@ export const authMiddleware = (
 
     if (!token) {
       return res
-        .status(403)
-        .json({ success: false, error: "token is expired or not defined" });
+        .status(401)
+        .json({ success: false, error: "No token provided" });
     }
 
-    const decodedInformation = jwt.verify(token, JWT_SECRET!) as JwtPayload;
-
-    if (!decodedInformation) {
-      return res.status(403).json({ success: false, error: "Unauthorised" });
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined in environment variables");
     }
+
+    const decodedInformation = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+    if (!decodedInformation.id || typeof decodedInformation.id !== "string") {
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid token payload" });
+    }
+
+    req.userId = decodedInformation.id;
 
     req.userId = decodedInformation.id;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json({
+        success: false,
         error: "Token expired",
       });
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).json({ success: false, error: "Invalid token" });
     }
 
     console.error("authMiddleware error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal server error" });
   }
 };
