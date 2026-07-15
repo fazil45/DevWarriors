@@ -1,6 +1,6 @@
 import { type JSX } from "react";
 
-export function Card({
+export function rounded-2xl border border-white/10 bg-ink-850/80 backdrop-blur-sm({
   className,
   title,
   children,

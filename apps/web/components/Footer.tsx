@@ -15,16 +15,16 @@ const socialIcons: IconType[] = [FaGithub, FaTwitter, FaLinkedin];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-ink-950">
-      <div className="container-x py-14">
+    <footer className="border-t border-white/10 bg-neutral-800">
+      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 py-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <a href="#top" className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-ember-500 to-ember-700 text-ink-950">
+              <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700 text-ink-950">
                 <Swords className="h-5 w-5" strokeWidth={2.5} />
               </span>
               <span className="font-display text-lg font-bold text-white">
-                Dev<span className="text-ember-500">Warriors</span>
+                Dev<span className="text-orange-500">Warriors</span>
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">
