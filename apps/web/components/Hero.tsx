@@ -1,4 +1,7 @@
+"use client";
 import { ArrowRight, Flame, Trophy, Users } from "lucide-react";
+import RoleModal from "./RoleModal";
+import { useModal } from "../store/showModal";
 
 const stats = [
   { icon: Users, value: "48K+", label: "Active warriors" },
@@ -7,10 +10,16 @@ const stats = [
 ];
 
 export default function Hero() {
+  const { showModal } = useModal();
+
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40">
+      <div
+        className={`z-100  w-full h-full  items-center justify-center ${showModal ? "flex" : "hidden"}`}
+      >
+        <RoleModal />
+      </div>
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-size-[44px_44px] mask-[radial-gradient(ellipse_70%_60%_at_50%_0%,black_50%,transparent_75%)]" />
-
       <div className="pointer-events-none absolute left-1/2 -top-1/3 h-105 w-250 -translate-x-1/2 rounded-full bg-orange-500/30 blur-[120px]" />
 
       <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 relative">

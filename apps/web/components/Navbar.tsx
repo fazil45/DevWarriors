@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Swords, Menu, X } from "lucide-react";
+import { useModal } from "../store/showModal";
+import { useRouter } from "next/navigation";
 
 const links = [
   { label: "Contests", href: "#contests" },
@@ -10,8 +12,11 @@ const links = [
 ];
 
 export default function Navbar() {
+  const router = useRouter()
+  const {setShowModal, showModal} = useModal()
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -29,7 +34,9 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
-        <a href="#top" className="flex items-center gap-2.5">
+        <a onClick={() => {
+          router.push("/")
+        }} className="flex items-center gap-2.5">
           <span className="relative grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-orange-400 to-orange-600 text-neutral-950">
             <Swords className="h-6 w-6 font-light" strokeWidth={3} />
           </span>
@@ -52,13 +59,13 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href="#"
+            href="/signin"
             className="text-sm font-medium text-slate-300 transition hover:text-white"
           >
             Sign in
           </a>
           <a
-            href="#contests"
+            onClick={() => setShowModal()}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
           >
             Join the arena
@@ -89,14 +96,14 @@ export default function Navbar() {
             ))}
             <div className="mt-2 flex gap-3">
               <a
-                href="#"
+                href="/siginin"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10 hover:-translate-y-0.5"
               >
                 Sign in
               </a>
               <a
                 href="#contests"
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
               >
                 Join
               </a>

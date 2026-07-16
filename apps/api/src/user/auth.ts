@@ -23,7 +23,7 @@ export const register = async (req: Request, res: Response) => {
     return res.status(409).json({ success: false, error: "Invalid inputs" });
   }
 
-  const { firstName, lastName, username, password } = parsedSignupData.data;
+  const { firstName, lastName, username, password, role } = parsedSignupData.data;
   const email = parsedSignupData.data.email.toLowerCase().trim();
 
   const checkUserExistAlready = await prisma.user.findUnique({
@@ -49,7 +49,7 @@ export const register = async (req: Request, res: Response) => {
           username,
           email,
           password: hashedPassword,
-          role: "DEVELOPER",
+          role: role,
           emailVerified: false,
         },
       });
@@ -201,7 +201,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 export const resendOTP = async (req: Request, res: Response) => {
   try {
-    const email = req.body;
+    const email = req.body.email;
 
     if (!email) {
       return res.status(403).json({ success: false, error: "invalid inputs" });
@@ -317,3 +317,30 @@ export const signin = async (req: Request, res: Response) => {
       .json({ success: false, error: "Something went wrong" });
   }
 };
+
+export const checkUsername = async (req: Request, res: Response) => {
+  try {
+    const username = req.query.username as string;
+
+    if (!username) {
+      return res.status(400).json({
+        available: false,
+        message: "Username is required",
+      });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    return res.status(200).json({
+      available: !existingUser,
+    });
+  } catch {
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}

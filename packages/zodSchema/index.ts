@@ -5,7 +5,8 @@ export const UserSignUpSchema = z.object({
     lastName: z.string().optional(),
     username:z.string().nonempty("Required"),
     email:z.string().email().nonempty("Required"),
-    password:z.string().min(6, "Minimum 6 character required").nonempty("Required")
+    password:z.string().min(6, "Minimum 6 character required").nonempty("Required"),
+    role:z.enum(["CREATOR","DEVELOPER"])
 })
 
 export const OTPVerificationSchema = z.object({

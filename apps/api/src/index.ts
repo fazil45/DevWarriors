@@ -1,9 +1,7 @@
 import express from "express"
 const app: express.Express = express()
 import userRouter from "./user/routes"
-import adminRouter from "./admin/route"
 import contestRouter from "./contest/routes"
-import { requestLimiter } from "./middleware/rate-limit"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import { authMiddleware } from "./middleware/auth.middleware"
@@ -17,10 +15,8 @@ app.use(cors({
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(requestLimiter)
 
 app.use("/api/v1/user",userRouter)
-app.use("/api/v1/admin",adminRouter)
 app.use("/api/v1/contest",authMiddleware,contestRouter)
 
 

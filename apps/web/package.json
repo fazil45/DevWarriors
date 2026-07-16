@@ -11,14 +11,20 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@repo/ui": "workspace:*",
+    "@repo/zodschema": "workspace:*",
     "@tailwindcss/postcss": "^4.3.2",
+    "@tanstack/react-form": "^1.33.2",
+    "@tanstack/react-form-nextjs": "^1.33.2",
+    "axios": "^1.18.1",
     "lucide-react": "^1.24.0",
     "next": "16.2.0",
     "postcss": "^8.5.19",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.3.2"
+    "sonner": "^2.0.7",
+    "tailwindcss": "^4.3.2",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <a href="#top" className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700 text-ink-950">
+              <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-orange-500 to-orange-700 text-ink-950">
                 <Swords className="h-5 w-5" strokeWidth={2.5} />
               </span>
               <span className="font-display text-lg font-bold text-white">
