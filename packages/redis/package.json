@@ -15,6 +15,7 @@
     "@types/bun": "latest"
   },
   "dependencies": {
+    "@repo/db": "workspace:*",
     "@redis/client": "^6.1.0",
     "@repo/typescript-config": "workspace:*"
   },

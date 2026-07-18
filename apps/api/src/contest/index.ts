@@ -8,6 +8,7 @@ import {
 } from "@repo/zodschema";
 import axios from "axios";
 import { type Request, Response } from "express";
+import { validateUserSubmission } from "../config/gemini-client";
 
 export const createContests = async (req: Request, res: Response) => {
   try {
@@ -150,12 +151,6 @@ export const submitIndependentChallenges = async (
 
 export const submitChallenges = async (req: Request, res: Response) => {
   try {
-    //? Todo:
-    // have rate limitting
-    // max 20 submissions per problem
-    // forward the request to GPT
-    // store the response in sorted set and the DB
-
     const parsedContestParamsData = contestSubmissionParamSchema.safeParse(
       req.params,
     );
@@ -180,6 +175,10 @@ export const submitChallenges = async (req: Request, res: Response) => {
 
     const { contestId, challengeId } = parsedContestParamsData.data;
     const { points, submission } = parsedContestBodyData.data;
+
+    const problemPrompt = "User has given the challenge to hash the password with bcrypt. Check all the silly mistake like wrong spelling and check the hashing is strong with using bcrypt with 12 rounds"
+
+    const resAi = validateUserSubmission({problemPrompt,submission})
 
     const userId = req.body.userId;
 
@@ -234,6 +233,8 @@ export const submitChallenges = async (req: Request, res: Response) => {
         contestToChallengeMappingId: mapping.id,
       },
     });
+
+
 
     const total = await prisma.contestSubmission.aggregate({
       where: {
