@@ -44,6 +44,7 @@ model Contest {
   id                        String                      @id @default(uuid())
   title                     String
   startTime                 DateTime
+  endTime                   DateTime
   leaderboard               Leaderboard[]
   contestToChallengeMapping ContestToChallengeMapping[]
 }
@@ -84,7 +85,7 @@ model ContestSubmission {
 model Submission {
   id                            String       @id       @default(uuid())
   submission                    String
-  challengeId   String
+  challengeId                   String
   userId                        String
   user                          User                        @relation(fields: [userId], references: [id])
   points                        Int

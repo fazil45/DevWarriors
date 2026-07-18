@@ -17,7 +17,7 @@ app.use(cookieParser())
 app.use(express.json())
 
 app.use("/api/v1/user",userRouter)
-app.use("/api/v1/contest",authMiddleware,contestRouter)
+app.use("/api/v1/contest",contestRouter)
 
 
 export default app
