@@ -18,6 +18,7 @@
     "typescript": "7.0.0"
   },
   "dependencies": {
+    "@repo/redis": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/zodschema": "workspace:*",
     "@types/cookie-parser": "^1.4.10",

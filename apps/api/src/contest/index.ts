@@ -1,4 +1,5 @@
 import { prisma } from "@repo/db/client";
+import { setupLeaderboard, getTopPlayers } from "@repo/redis";
 import {
   ChallengeSchema,
   ContestSchema,
@@ -138,7 +139,9 @@ export const getContestWithChallenges = async (
   res: Response,
 ) => {};
 
-export const getContestLeaderboard = async (req: Request, res: Response) => {};
+export const getContestLeaderboard = async (req: Request, res: Response) => {
+  const contestId = req.params["contestId"];
+};
 
 export const submitIndependentChallenges = async (
   req: Request,
@@ -231,6 +234,18 @@ export const submitChallenges = async (req: Request, res: Response) => {
         contestToChallengeMappingId: mapping.id,
       },
     });
+
+    const total = await prisma.contestSubmission.aggregate({
+      where: {
+        userId,
+        contestToChallengeMapping: { contestId },
+      },
+      _sum: { points: true },
+    });
+
+    const totalPoints = total._sum?.points ?? 0;
+
+    await setupLeaderboard({ contestId, totalPoints, userId });
 
     res.status(200).json({
       success: true,
