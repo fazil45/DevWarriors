@@ -176,7 +176,20 @@ export const submitChallenges = async (req: Request, res: Response) => {
     const { contestId, challengeId } = parsedContestParamsData.data;
     const { points, submission } = parsedContestBodyData.data;
 
-    const problemPrompt = "User has given the challenge to hash the password with bcrypt. Check all the silly mistake like wrong spelling and check the hashing is strong with using bcrypt with 12 rounds"
+    const problemPrompt = `"User has given the challenge to hash the password with bcrypt. Check all the silly mistake like wrong spelling and check the hashing is strong with using bcrypt with 12 rounds based on code workability give points out off 6 for working code Response Format:
+    {
+      "universalScore": {
+        "readability": 0,
+        "codeQuality": 0,
+        "bestPractices": 0,
+        "performance": 0,
+        "working":0
+        "total": 0
+      },
+      "strengths": [],
+      "improvements": [],
+      "summary": ""
+    }"`
 
     const resAi = validateUserSubmission({problemPrompt,submission})
 
