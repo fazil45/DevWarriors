@@ -48,6 +48,5 @@ export const contestSubmissionParamSchema = z.object({
 });
 
 export const contestSubmissionBodySchema = z.object({
-  points: z.number(),
   submission: z.string().nonempty("Required"),
 });

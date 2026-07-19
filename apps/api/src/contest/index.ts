@@ -1,12 +1,11 @@
 import { prisma } from "@repo/db/client";
-import { setupLeaderboard, getTopPlayers } from "@repo/redis";
+import { setupLeaderboard } from "@repo/redis";
 import {
   ChallengeSchema,
   ContestSchema,
   contestSubmissionBodySchema,
   contestSubmissionParamSchema,
 } from "@repo/zodschema";
-import axios from "axios";
 import { type Request, Response } from "express";
 import { validateUserSubmission } from "../config/gemini-client";
 
@@ -141,7 +140,6 @@ export const getContestWithChallenges = async (
 ) => {};
 
 export const getContestLeaderboard = async (req: Request, res: Response) => {
-  const contestId = req.params["contestId"];
 };
 
 export const submitIndependentChallenges = async (
@@ -174,7 +172,7 @@ export const submitChallenges = async (req: Request, res: Response) => {
     }
 
     const { contestId, challengeId } = parsedContestParamsData.data;
-    const { points, submission } = parsedContestBodyData.data;
+    const { submission } = parsedContestBodyData.data;
 
     const problemPrompt = `"User has given the challenge to hash the password with bcrypt. Check all the silly mistake like wrong spelling and check the hashing is strong with using bcrypt with 12 rounds based on code workability give points out off 6 for working code Response Format:
     {
@@ -191,7 +189,9 @@ export const submitChallenges = async (req: Request, res: Response) => {
       "summary": ""
     }"`
 
-    const resAi = validateUserSubmission({problemPrompt,submission})
+    const resAi = await validateUserSubmission({problemPrompt,submission})
+
+    const codevalidation = resAi
 
     const userId = req.body.userId;
 
@@ -241,7 +241,7 @@ export const submitChallenges = async (req: Request, res: Response) => {
     const challengeSubmission = await prisma.contestSubmission.create({
       data: {
         userId,
-        points,
+        points:resAi.totalScore,
         submission,
         contestToChallengeMappingId: mapping.id,
       },
