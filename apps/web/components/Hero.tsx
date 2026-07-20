@@ -32,9 +32,10 @@ export default function Hero() {
             Contest season now live
           </span>
 
-          <h1 className="mt-6 font-display text-5xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
-            Where <span className="text-orange-500">coders</span> become
-            <br className="hidden sm:block" />{" "}
+          <h1 className="mt-6 font-display  flex flex-col items-center justify-center lg:text-9xl  font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
+            <span className="flex gap-x-6">
+              Where <span className="text-orange-500">coders</span> become
+            </span>
             <span className="mx-auto w-full max-w-7xl px-5 sm:px-8">
               warriors
             </span>
