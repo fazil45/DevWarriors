@@ -1,13 +1,16 @@
 import { prisma } from "@repo/db/client";
-import { setupLeaderboard } from "@repo/redis";
+import { getTopPlayers, setupLeaderboard } from "@repo/redis";
 import {
+  ChallengeParamsSchema,
   ChallengeSchema,
   ContestSchema,
-  contestSubmissionBodySchema,
   contestSubmissionParamSchema,
+  LeaderboardSchema,
 } from "@repo/zodschema";
 import { type Request, Response } from "express";
 import { validateUserSubmission } from "../config/gemini-client";
+import { parse } from "dotenv";
+import { getProblem } from "../config/notion-problem";
 
 export const createContests = async (req: Request, res: Response) => {
   try {
@@ -62,7 +65,7 @@ export const createChallenges = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
     }
 
-    const { contestId, index, maxPoints, notionDocId, title } =
+    const { contestId, index, maxPoints, notionDocId, title, challengePrompt } =
       parsedChallengeData.data;
 
     const challenge = await prisma.$transaction(async (tx) => {
@@ -72,6 +75,7 @@ export const createChallenges = async (req: Request, res: Response) => {
           maxPoints,
           notionDocId,
           title,
+          challengePrompt,
           contestToChallengeMapping: {
             create: {
               index,
@@ -140,12 +144,90 @@ export const getContestWithChallenges = async (
 ) => {};
 
 export const getContestLeaderboard = async (req: Request, res: Response) => {
+  const parsedContestData = LeaderboardSchema.safeParse(req.params)
+
+  if (!parsedContestData.success) {
+    return res.status(400).json({success:false,error: parsedContestData.error.flatten()})
+  }
+
+  const { contestId } = parsedContestData.data
+
+  const topPlayers = await getTopPlayers(contestId)
+
+  if (topPlayers.length === 0) {
+    return res.status(404).json({ success: false, error: "Leaderboard not available" });
+  }
+
+  const leaderboard = await prisma.leaderboard.findFirst({
+    where:{
+      contestId:contestId,
+    },
+    orderBy:{}
+  })
+
+  if (!leaderboard) {
+    return res.status(404).json({success:false,error:"Leaderboard not available"})
+  }
+
+  res.status(200).json({success:true,leaderboard:leaderboard})
 };
 
 export const submitIndependentChallenges = async (
   req: Request,
   res: Response,
-) => {};
+) => {
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(400).json({ success: false, error: "Unauthenticated" });
+  }
+
+  const parsedParamsData = ChallengeParamsSchema.safeParse(req.params);
+
+  if (!parsedParamsData.success) {
+    return res
+      .status(400)
+      .json({ success: false, error: parsedParamsData.error.flatten() });
+  }
+
+  const submission = req.body.submission;
+  const { challengeId } = parsedParamsData.data;
+
+  const challenge = await prisma.challenge.findUnique({
+    where: {
+      id: challengeId,
+    },
+  });
+
+  if (!challenge) {
+    return res.status(404).json({success:false,error:"challenge not found"})
+  }
+
+  const problemPrompt = challenge.challengePrompt
+
+  const noctionDocId = await getProblem(challenge?.notionDocId!);
+
+
+  const Res = await validateUserSubmission({
+    problem: noctionDocId,
+    submission,
+    problemPrompt,
+  });
+
+  await prisma.submission.upsert({
+    where: { userId_challengeId: { userId, challengeId } },
+    update: { submission, points: Res.totalScore },
+    create: { submission, points: Res.totalScore, userId, challengeId },
+  });
+
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "Challenge Submit Successfully",
+      reasoning: Res.reasoning,
+    });
+};
 
 export const submitChallenges = async (req: Request, res: Response) => {
   try {
@@ -160,38 +242,7 @@ export const submitChallenges = async (req: Request, res: Response) => {
       });
     }
 
-    const parsedContestBodyData = contestSubmissionBodySchema.safeParse(
-      req.body,
-    );
-
-    if (!parsedContestBodyData.success) {
-      return res.status(400).json({
-        success: false,
-        error: parsedContestBodyData.error.flatten(),
-      });
-    }
-
     const { contestId, challengeId } = parsedContestParamsData.data;
-    const { submission } = parsedContestBodyData.data;
-
-    const problemPrompt = `"User has given the challenge to hash the password with bcrypt. Check all the silly mistake like wrong spelling and check the hashing is strong with using bcrypt with 12 rounds based on code workability give points out off 6 for working code Response Format:
-    {
-      "universalScore": {
-        "readability": 0,
-        "codeQuality": 0,
-        "bestPractices": 0,
-        "performance": 0,
-        "working":0
-        "total": 0
-      },
-      "strengths": [],
-      "improvements": [],
-      "summary": ""
-    }"`
-
-    const resAi = await validateUserSubmission({problemPrompt,submission})
-
-    const codevalidation = resAi
 
     const userId = req.body.userId;
 
@@ -238,17 +289,6 @@ export const submitChallenges = async (req: Request, res: Response) => {
       return res.status(404).json({ success: false });
     }
 
-    const challengeSubmission = await prisma.contestSubmission.create({
-      data: {
-        userId,
-        points:resAi.totalScore,
-        submission,
-        contestToChallengeMappingId: mapping.id,
-      },
-    });
-
-
-
     const total = await prisma.contestSubmission.aggregate({
       where: {
         userId,
@@ -263,8 +303,8 @@ export const submitChallenges = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Submitted successfully",
-      submission: challengeSubmission,
+      message: "Contest Submitted successfully",
+      
     });
   } catch (error) {
     console.log(error);

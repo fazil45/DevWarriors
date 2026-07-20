@@ -12,7 +12,6 @@ export const setupLeaderboard = async ({
   contestId: string;
   userId: string;
 }) => {
-
   await redisClient.zAdd(`leaderboard:${contestId}`, {
     score: totalPoints,
     value: userId,
@@ -23,7 +22,6 @@ export const setupLeaderboard = async ({
     update: { points: totalPoints },
     create: { contestId, userId, points: totalPoints },
   });
-
 };
 
 export const getTopPlayers = async (contestId: string, limit = 10) => {
@@ -38,17 +36,17 @@ export const getTopPlayers = async (contestId: string, limit = 10) => {
 
   return results.map((r, i) => ({
     rank: i + 1,
-    userId:r.value,
-    points:r.score
-  }))
+    userId: r.value,
+    points: r.score,
+  }));
 };
 
-export const getUserRank = async (contestId:string,userId:string) => {
-  const rank = await redisClient.zRevRank(`leaderboard:${contestId}`,userId)
-  const points = await redisClient.zScore(`leaderboard:${contestId}`,userId)
+export const getUserRank = async (contestId: string, userId: string) => {
+  const rank = await redisClient.zRevRank(`leaderboard:${contestId}`, userId);
+  const points = await redisClient.zScore(`leaderboard:${contestId}`, userId);
 
   return {
     rank: rank !== null ? rank + 1 : null,
-    points: points ?? 0
-  }
-}
+    points: points ?? 0,
+  };
+};

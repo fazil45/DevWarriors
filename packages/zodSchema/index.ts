@@ -38,6 +38,7 @@ export const ChallengeSchema = z.object({
   title: z.string().nonempty("Required"),
   notionDocId: z.string().nonempty("Required"),
   contestId: z.string().nonempty("Required"),
+  challengePrompt:z.string().nonempty(""),
   maxPoints: z.number(),
   index: z.number(),
 });
@@ -47,6 +48,10 @@ export const contestSubmissionParamSchema = z.object({
   challengeId: z.string().nonempty("Required"),
 });
 
-export const contestSubmissionBodySchema = z.object({
-  submission: z.string().nonempty("Required"),
+export const ChallengeParamsSchema = z.object({
+  challengeId: z.string(),
 });
+
+export const LeaderboardSchema = z.object({
+  contestId:z.string().nonempty("Required")
+})
