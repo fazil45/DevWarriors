@@ -8,17 +8,16 @@ import {
   LeaderboardSchema,
 } from "@repo/zodschema";
 import { type Request, Response } from "express";
-import { validateUserSubmission } from "../config/gemini-client";
-import { parse } from "dotenv";
+import { validateUserSubmission } from "../config/gemini-client"; 
 import { getProblem } from "../config/notion-problem";
 
 export const createContests = async (req: Request, res: Response) => {
   try {
-    // const userId = req.userId;
+    const userId = req.userId;
 
-    // if (userId) {
-    //   return res.status(403).json({ success: false, error: "Unauthenticated" });
-    // }
+    if (userId) {
+      return res.status(403).json({ success: false, error: "Unauthenticated" });
+    }
 
     const parsedContestData = ContestSchema.safeParse(req.body);
 
@@ -52,11 +51,11 @@ export const createContests = async (req: Request, res: Response) => {
 
 export const createChallenges = async (req: Request, res: Response) => {
   try {
-    // const userId = req.userId;
+    const userId = req.userId;
 
-    // if (userId) {
-    //   return res.status(403).json({ success: false, error: "Unauthenticated" });
-    // }
+    if (userId) {
+      return res.status(403).json({ success: false, error: "Unauthenticated" });
+    }
 
     const parsedChallengeData = ChallengeSchema.safeParse(req.body);
     console.log(parsedChallengeData);
@@ -99,11 +98,11 @@ export const createChallenges = async (req: Request, res: Response) => {
 
 export const getActiveContests = async (req: Request, res: Response) => {
   try {
-    // const userId = req.userId;
+    const userId = req.userId;
 
-    // if (userId) {
-    //   return res.status(403).json({ success: false, error: "Unauthenticated" });
-    // }
+    if (userId) {
+      return res.status(403).json({ success: false, error: "Unauthenticated" });
+    }
 
     const activeContest = await prisma.contest.findMany({
       where: {
@@ -138,46 +137,53 @@ export const getContestById = async (req: Request, res: Response) => {
   const { offset, page } = req.query;
 };
 
-export const getContestWithChallenges = async (
-  req: Request,
-  res: Response,
-) => {};
-
 export const getContestLeaderboard = async (req: Request, res: Response) => {
-  const parsedContestData = LeaderboardSchema.safeParse(req.params)
+  const parsedContestData = LeaderboardSchema.safeParse(req.params);
 
   if (!parsedContestData.success) {
-    return res.status(400).json({success:false,error: parsedContestData.error.flatten()})
+    return res
+      .status(400)
+      .json({ success: false, error: parsedContestData.error.flatten() });
   }
 
-  const { contestId } = parsedContestData.data
+  const { contestId } = parsedContestData.data;
 
-  const topPlayers = await getTopPlayers(contestId)
+  const topPlayers = await getTopPlayers(contestId);
 
   if (topPlayers.length === 0) {
-    return res.status(404).json({ success: false, error: "Leaderboard not available" });
+    return res
+      .status(404)
+      .json({ success: false, error: "Leaderboard not available" });
   }
 
-  const leaderboard = await prisma.leaderboard.findFirst({
-    where:{
-      contestId:contestId,
-    },
-    orderBy:{}
-  })
+  const userIds = topPlayers.map((p) => p.userId);
+  const users = await prisma.user.findMany({
+    where: { id: { in: userIds } },
+    select: { id: true, username: true, firstName: true },
+  });
+  const userMap = new Map(users.map((u) => [u.id, u]));
+
+  const leaderboard = topPlayers.map((p) => ({
+    rank: p.rank,
+    points: p.points,
+    username: userMap.get(p.userId)?.username,
+  }));
 
   if (!leaderboard) {
-    return res.status(404).json({success:false,error:"Leaderboard not available"})
+    return res
+      .status(404)
+      .json({ success: false, error: "Leaderboard not available" });
   }
 
-  res.status(200).json({success:true,leaderboard:leaderboard})
+  res.status(200).json({ success: true, leaderboard: leaderboard });
 };
 
 export const submitIndependentChallenges = async (
   req: Request,
   res: Response,
 ) => {
-  const userId = req.userId;
-
+  const userId = "c850f744-a5de-440d-b7f9-46d7822bec3d";
+  console.log(userId)
   if (!userId) {
     return res.status(400).json({ success: false, error: "Unauthenticated" });
   }
@@ -200,13 +206,14 @@ export const submitIndependentChallenges = async (
   });
 
   if (!challenge) {
-    return res.status(404).json({success:false,error:"challenge not found"})
+    return res
+      .status(404)
+      .json({ success: false, error: "challenge not found" });
   }
 
-  const problemPrompt = challenge.challengePrompt
+  const problemPrompt = challenge.challengePrompt;
 
   const noctionDocId = await getProblem(challenge?.notionDocId!);
-
 
   const Res = await validateUserSubmission({
     problem: noctionDocId,
@@ -220,13 +227,11 @@ export const submitIndependentChallenges = async (
     create: { submission, points: Res.totalScore, userId, challengeId },
   });
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "Challenge Submit Successfully",
-      reasoning: Res.reasoning,
-    });
+  res.status(200).json({
+    success: true,
+    message: "Challenge Submit Successfully",
+    reasoning: Res.reasoning,
+  });
 };
 
 export const submitChallenges = async (req: Request, res: Response) => {
@@ -244,7 +249,7 @@ export const submitChallenges = async (req: Request, res: Response) => {
 
     const { contestId, challengeId } = parsedContestParamsData.data;
 
-    const userId = req.body.userId;
+    const userId =  "c850f744-a5de-440d-b7f9-46d7822bec3d";
 
     if (!userId) {
       return res.status(403).json({ success: false, error: "Unauthenticated" });
@@ -304,7 +309,6 @@ export const submitChallenges = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Contest Submitted successfully",
-      
     });
   } catch (error) {
     console.log(error);

@@ -297,7 +297,8 @@ export const signin = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
     }
 
-    const token = jwt.sign(userExist.id, JWT_SECRET!);
+    const token = jwt.sign(userExist.id, JWT_SECRET);
+    console.log(JWT_SECRET)
 
     res.status(200).cookie('token',token, CookieOption).json(({success:true, message:"Login successfully"}))
   } catch (error) {
