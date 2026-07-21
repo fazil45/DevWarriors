@@ -345,3 +345,11 @@ export const checkUsername = async (req: Request, res: Response) => {
     });
   }
 }
+
+export const me = async (req:Request, res:Response) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}

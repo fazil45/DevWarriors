@@ -23,10 +23,12 @@ interface GetProblemResponse {
 function ChallengePage() {
   const params = useParams();
   const challengeId = params.challengeId as string;
+  const contestId = params.contestId as string;
   const [problemData, setProblemData] = useState<Problem>();
   const [code, setCode] = useState("// write your solution here\n");
   const [language, setLanguage] = useState("typescript");
   const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const getProblem = async ({ challengeId }: { challengeId: string }) => {
     try {
@@ -57,47 +59,84 @@ function ChallengePage() {
 
   useEffect(() => {
     getProblem({ challengeId });
-    console.log("problemData updated:", problemData);
   }, []);
 
-  useEffect(() => {
-    console.log("problemData is now:", problemData);
-  }, [problemData]);
-
   async function handleSubmit() {
-    const res = await fetch(`/api/challenge/${challengeId}/submit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ submission: code }),
-    });
-    const data = await res.json();
-    // show result — toast, side panel, whatever fits your UI
+    try {
+      setSubmitLoading(true);
+      const response = await axios.post(
+        `${env.BACKEND_URL}/contest/submit/${contestId}/${challengeId}"`,
+        {
+          submission: code,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.reasoning)
+      } else {
+        toast.error(response.data.error)
+      }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            toast.error(error.response?.data.error || "Something went wrong")
+        } else {
+            toast.error("Something went wrong")
+        }
+    }
   }
 
   return (
     <div className="bg-gray-800">
       <div className="mt-16">
         <Group orientation="horizontal" className="min-h-screen">
-          {/* Left: problem statement */}
           <Panel defaultSize={40} minSize={30}>
             <div className="h-full overflow-y-auto p-6 bg-zinc-900">
               {loading ? (
                 <p>Loading problem...</p>
               ) : (
-                <div className="h-full overflow-y-auto p-6 bg-white dark:bg-zinc-900">
-                  <div className="flex flex-col items-start justify-between mb-4">
-                    <div className="flex items-center justify-around w-full mb-4">
-                      <h1 className="text-xl font-semibold">
-                        Challenge:  {problemData?.title}
-                      </h1>
-                      <span className="text-sm text-zinc-500">
-                        Total points:  {problemData?.maxPoints} pts
-                      </span>
+                <div className="h-full overflow-y-auto bg-zinc-50 dark:bg-zinc-950 p-6 overflow-hidden">
+                  <div className="mx-auto max-w-4xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                    <div className="flex flex-col gap-4 border-b border-zinc-200 pb-6 dark:border-zinc-800 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <p className="mb-2 text-sm font-medium uppercase tracking-wider text-orange-500">
+                          Coding Challenge
+                        </p>
+
+                        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                          {problemData?.title}
+                        </h1>
+                      </div>
+
+                      <div className="rounded-xl border border-orange-200 bg-orange-50 px-2 py-3 dark:border-orange-900 dark:bg-orange-950/40">
+                        <p className="text-xs uppercase tracking-wide text-orange-600 dark:text-orange-400">
+                          Max Points
+                        </p>
+                        <p className="text-2xl font-bold text-orange-500 text-center">
+                          {problemData?.maxPoints}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-md  font-medium max-w-none">
-                      <ReactMarkdown>
-                        {problemData?.problemStatement}
-                      </ReactMarkdown>
+                    <div className="mt-8">
+                      <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-white">
+                        Problem Statement
+                      </h2>
+
+                      <div className="prose prose-zinc max-w-none dark:prose-invert prose-pre:rounded-xl prose-pre:border prose-pre:border-zinc-700 prose-pre:bg-zinc-950 prose-code:text-orange-500 text-wrap ">
+                        <ReactMarkdown
+                          components={{
+                            pre: ({ children }) => (
+                              <pre className="overflow-x-auto whitespace-pre-wrap wrap-break-words rounded-lg bg-zinc-900 p-4">
+                                {children}
+                              </pre>
+                            ),
+                          }}
+                        >
+                          {problemData?.problemStatement}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -106,8 +145,6 @@ function ChallengePage() {
           </Panel>
 
           <Separator className="w-1 bg-zinc-200 dark:bg-zinc-700 hover:bg-blue-500 transition-colors cursor-col-resize" />
-
-          {/* Right: editor */}
           <Panel defaultSize={60} minSize={30}>
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between px-4 py-2 mb-1 bg-zinc-700">
