@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 
 interface Contest {
+  id:string
   title: string;
   startTime: string;
   endTime: string;
@@ -107,7 +108,7 @@ const Developer = () => {
                   </div>
 
                   <button
-                    onClick={() => router.push(`/`)}
+                    onClick={() => router.push(`/contest/${item.id}`)}
                     className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
                       contest.status === "ENDED"
                         ? "cursor-not-allowed bg-neutral-800 text-neutral-500"

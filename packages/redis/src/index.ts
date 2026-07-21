@@ -1,7 +1,25 @@
 import { createClient } from "@redis/client";
 import { prisma } from "@repo/db/client";
+import { getProblem } from "./notion-problem";
+
 const redisClient = createClient();
 redisClient.connect();
+
+
+
+const CACHE_TTL_SECONDS = 60 * 30; // 30 min — long enough to cut repeat calls, short enough that edits propagate reasonably fast
+
+export async function getProblemCached(notionDocId: string): Promise<string> {
+  const cacheKey = `problem:${notionDocId}`;
+
+  const cached = await redisClient.get(cacheKey);
+  if (cached) return cached;
+
+  const fresh = await getProblem(notionDocId);
+  await redisClient.set(cacheKey, fresh, { EX: CACHE_TTL_SECONDS });
+
+  return fresh;
+}
 
 export const setupLeaderboard = async ({
   totalPoints,
@@ -50,3 +68,4 @@ export const getUserRank = async (contestId: string, userId: string) => {
     points: points ?? 0,
   };
 };
+

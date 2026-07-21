@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { GEMINI_API_KEY } from ".";
+import { GEMINI_API_KEY } from "../config/index";
 
 interface AIEvaluationTypes {
   codeQualityScore: number,

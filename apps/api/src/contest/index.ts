@@ -3,13 +3,14 @@ import { getTopPlayers, setupLeaderboard } from "@repo/redis";
 import {
   ChallengeParamsSchema,
   ChallengeSchema,
+  contestIdParams,
   ContestSchema,
   contestSubmissionParamSchema,
   LeaderboardSchema,
 } from "@repo/zodschema";
 import { type Request, Response } from "express";
-import { validateUserSubmission } from "../config/gemini-client";
-import { getProblem } from "../config/notion-problem";
+import { validateUserSubmission } from "../service/gemini-client";
+import { getProblemCached } from "@repo/redis";
 
 export const createContests = async (req: Request, res: Response) => {
   try {
@@ -109,11 +110,17 @@ export const getActiveContests = async (req: Request, res: Response) => {
         startTime: { lte: new Date() },
         endTime: { gte: new Date() },
       },
-      select:{title:true,startTime:true, endTime:true,_count:{
-        select:{
-          contestToChallengeMapping:true
+      select: {
+        id: true,
+        title: true,
+        startTime: true,
+        endTime: true,
+        _count: {
+          select: {
+            contestToChallengeMapping: true,
+          },
         },
-      }}
+      },
     });
 
     console.log(activeContest);
@@ -143,11 +150,17 @@ export const getContests = async (req: Request, res: Response) => {
     }
 
     const activeContest = await prisma.contest.findMany({
-      select:{title:true,startTime:true, endTime:true,_count:{
-        select:{
-          contestToChallengeMapping:true
+      select: {
+        id: true,
+        title: true,
+        startTime: true,
+        endTime: true,
+        _count: {
+          select: {
+            contestToChallengeMapping: true,
+          },
         },
-      }}
+      },
     });
 
     console.log(activeContest);
@@ -168,7 +181,69 @@ export const getContests = async (req: Request, res: Response) => {
   }
 };
 
-export const getContes
+export const getContestById = async (req: Request, res: Response) => {
+  try {
+    const parsedParamsData = contestIdParams.safeParse(req.params);
+
+    if (!parsedParamsData.success) {
+      return res
+        .status(400)
+        .json({ success: false, error: "contest not found" });
+    }
+
+    const contestId = parsedParamsData.data.contestId;
+
+    const contest = await prisma.contest.findUnique({
+      where: {
+        id: contestId,
+      },
+    });
+
+    res.status(200).json({ success: true, contest: contest });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, error });
+  }
+};
+
+export const getChallengeInContest = async (req: Request, res: Response) => {
+  try {
+    const parsedChallengeData = contestIdParams.safeParse(req.params);
+
+    if (!parsedChallengeData.success) {
+      return res
+        .status(400)
+        .json({ success: false, error: parsedChallengeData.error.flatten() });
+    }
+
+    const contestId = parsedChallengeData.data.contestId;
+
+    const challenges = await prisma.challenge.findMany({
+      where: {
+        contestId,
+      },
+      select: {
+        id: true,
+        title: true,
+        maxPoints: true,
+        contestToChallengeMapping: {
+          select: {
+            contest: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({ success: true, challenges: challenges });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+};
 
 export const getContestLeaderboard = async (req: Request, res: Response) => {
   const parsedContestData = LeaderboardSchema.safeParse(req.params);
@@ -211,6 +286,41 @@ export const getContestLeaderboard = async (req: Request, res: Response) => {
   res.status(200).json({ success: true, leaderboard: leaderboard });
 };
 
+export const getChallengeProblem = async (req: Request, res: Response) => {
+  try {
+    const parsedParamsData = ChallengeParamsSchema.safeParse(req.params);
+
+    if (!parsedParamsData.success) {
+      return res
+        .status(400)
+        .json({ success: false, error: parsedParamsData.error.flatten() });
+    }
+    const { challengeId } = parsedParamsData.data;
+    const challenge = await prisma.challenge.findUnique({
+      where: { id: challengeId },
+    });
+    if (!challenge) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Challenge not found" });
+    }
+
+    const problemStatement = await getProblemCached(challenge.notionDocId);
+
+    res.status(200).json({
+      success: true,
+      problem: {
+        title: challenge.title,
+        problemStatement,
+        maxPoints: challenge.maxPoints,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Failed to load problem" });
+  }
+};
+
 export const submitIndependentChallenges = async (
   req: Request,
   res: Response,
@@ -246,7 +356,7 @@ export const submitIndependentChallenges = async (
 
   const problemPrompt = challenge.challengePrompt;
 
-  const noctionDocId = await getProblem(challenge?.notionDocId!);
+  const noctionDocId = await getProblemCached(challenge?.notionDocId!);
 
   const Res = await validateUserSubmission({
     problem: noctionDocId,

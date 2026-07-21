@@ -1,4 +1,4 @@
 {
   "extends": "@repo/typescript-config/bun.json",
-  "include": ["src"]
+  "include": ["src", "../../packages/redis/src/notion-problem.ts"]
 }

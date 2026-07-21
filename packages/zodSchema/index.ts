@@ -48,6 +48,10 @@ export const contestSubmissionParamSchema = z.object({
   challengeId: z.string().nonempty("Required"),
 });
 
+export const contestIdParams = z.object({
+  contestId:z.string().nonempty("Required")
+})
+
 export const ChallengeParamsSchema = z.object({
   challengeId: z.string(),
 });
