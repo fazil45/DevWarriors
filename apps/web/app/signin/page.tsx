@@ -10,10 +10,12 @@ import Button from "../../components/Button";
 import { toast } from "sonner";
 import { FieldError } from "../../components/FieldError";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Signin = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient()
 
   const form = useForm({
     defaultValues: {
@@ -32,6 +34,10 @@ const Signin = () => {
         const response = await axios.post(`${env.BACKEND_URL}/user/signin`, {
           email,
           password,
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["current-user"],
         });
 
         if (response.data.success) {

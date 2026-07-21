@@ -59,7 +59,6 @@ export const createChallenges = async (req: Request, res: Response) => {
     }
 
     const parsedChallengeData = ChallengeSchema.safeParse(req.body);
-    console.log(parsedChallengeData);
 
     if (!parsedChallengeData.success) {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
@@ -123,8 +122,6 @@ export const getActiveContests = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(activeContest);
-
     if (!activeContest) {
       return res
         .status(404)
@@ -163,7 +160,6 @@ export const getContests = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(activeContest);
 
     if (!activeContest) {
       return res
@@ -326,7 +322,6 @@ export const submitIndependentChallenges = async (
   res: Response,
 ) => {
   const userId = req.userId;
-  console.log(userId);
   if (!userId) {
     return res.status(400).json({ success: false, error: "Unauthenticated" });
   }

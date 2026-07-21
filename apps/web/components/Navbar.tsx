@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Swords, Menu, X } from "lucide-react";
+import { Swords, Menu, X, User2 } from "lucide-react";
 import { useModal } from "../store/showModal";
 import { useRouter } from "next/navigation";
+import { useCurrentUser } from "../hooks/useAuth";
 
 const links = [
   { id: 1, label: "Contests" },
@@ -12,9 +13,10 @@ const links = [
 
 export default function Navbar() {
   const router = useRouter();
+  const { data: user } = useCurrentUser();
+  const [open, setOpen] = useState(false);
   const { setShowModal, showModal } = useModal();
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -57,20 +59,24 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <a
-            href="/signin"
-            className="text-sm font-medium text-slate-300 transition hover:text-white"
-          >
-            Sign in
-          </a>
-          <a
-            onClick={() => setShowModal()}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Join the arena
-          </a>
-        </div>
+        {user ? (
+          <User2 />
+        ) : (
+          <div className="hidden items-center gap-3 md:flex">
+            <a
+              href="/signin"
+              className="text-sm font-medium text-slate-300 transition hover:text-white"
+            >
+              Sign in
+            </a>
+            <a
+              onClick={() => setShowModal()}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              Join the arena
+            </a>
+          </div>
+        )}
 
         <button
           className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-slate-200 md:hidden"

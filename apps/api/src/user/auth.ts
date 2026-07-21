@@ -10,11 +10,10 @@ import { Prisma, prisma } from "@repo/db/client";
 import { generateOTP } from "../utils/generateOtp";
 import { hashOTP } from "../utils/hashOtp";
 import { sendOtp } from "../utils/sendOtp";
-import {  JWT_SECRET } from "../config/index";
+import { JWT_SECRET } from "../config/index";
 import { CookieOption } from "../config/cookie-config";
 
 const HASHED_COUNT = 10;
-
 
 export const register = async (req: Request, res: Response) => {
   const parsedSignupData = UserSignUpSchema.safeParse(req.body);
@@ -23,7 +22,8 @@ export const register = async (req: Request, res: Response) => {
     return res.status(409).json({ success: false, error: "Invalid inputs" });
   }
 
-  const { firstName, lastName, username, password, role } = parsedSignupData.data;
+  const { firstName, lastName, username, password, role } =
+    parsedSignupData.data;
   const email = parsedSignupData.data.email.toLowerCase().trim();
 
   const checkUserExistAlready = await prisma.user.findUnique({
@@ -298,9 +298,13 @@ export const signin = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(userExist.id, JWT_SECRET);
-    console.log(JWT_SECRET)
+    console.log(JWT_SECRET);
 
-    res.status(200).cookie('token',token, CookieOption).json(({success:true, message:"Login successfully"}))
+    console.log(token)
+    res
+      .status(200)
+      .cookie("token", token, CookieOption)
+      .json({ success: true, message: "Login successfully" });
   } catch (error) {
     console.error(error);
 
@@ -344,12 +348,35 @@ export const checkUsername = async (req: Request, res: Response) => {
       message: "Internal Server Error",
     });
   }
-}
+};
 
-export const me = async (req:Request, res:Response) => {
+export const me = async (req: Request, res: Response) => {
   try {
-    
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.userId,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+      });
+    }
+
+    return res.json({
+      success: true,
+      user,
+    });
   } catch (error) {
-    
+    console.error(error);
+    res.status(500).json({ success: false, error: "Server error" });
   }
-}
+};
