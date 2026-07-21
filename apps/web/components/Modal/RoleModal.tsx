@@ -2,7 +2,7 @@
 
 import { X, Code2, Palette } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useModal } from "../store/showModal";
+import { useModal } from "../../store/showModal";
 
 const RoleModal = () => {
   const router = useRouter();

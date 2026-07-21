@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import Developer from "../../components/Developer";
-import Creator from "../../components/Creator";
+import Developer from "../../components/Dashboard/Developer";
+import Creator from "../../components/Dashboard/Creator";
 import React from "react";
 
 type Role = "developer" | "creator";

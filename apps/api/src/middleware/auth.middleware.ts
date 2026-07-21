@@ -21,7 +21,6 @@ export const authMiddleware = (
     }
 
     const decodedInformation = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    console.log(decodedInformation)
 
     if (!decodedInformation.id || typeof decodedInformation.id !== "string") {
       return res

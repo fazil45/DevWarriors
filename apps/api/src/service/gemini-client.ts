@@ -45,9 +45,9 @@ ${submission}
 SCORING
 ========================
 
-Total: 10 points
+Total: 100 points
 
-1. CODE QUALITY (0-4)
+1. CODE QUALITY (10-40)
 
 Evaluate:
 - Readable and well-organized code
@@ -56,7 +56,7 @@ Evaluate:
 - Comments only where they improve understanding
 - Avoidance of obvious anti-patterns, unnecessary complexity, duplicated logic, and dead code
 
-2. CORRECTNESS (0-6)
+2. CORRECTNESS (10-60)
 
 Evaluate:
 - Does the solution solve the requested problem?
@@ -107,10 +107,11 @@ Respond with ONLY valid JSON.
 }
 
 Rules:
-- codeQualityScore must be an integer from 0 to 4.
-- correctnessScore must be an integer from 0 to 6.
+- codeQualityScore must be an integer from 10 to 40.
+- correctnessScore must be an integer from 10 to 60.
 - totalScore must equal codeQualityScore + correctnessScore.
 - reasoning must be 2-3 concise sentences explaining the score with reference to the problem requirements.
+- If solution is more correctly written than asked in problem then reward extra point not deduct if it is correct. 
 `;
 
   // Use ai.models.generateContent for Gemini 2.5 Flash

@@ -45,7 +45,7 @@ export default function HowItWorks() {
               <span className="absolute right-5 top-4 font-display text-5xl font-bold text-white/5">
                 0{i + 1}
               </span>
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-700/5 text-orange-400">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-linear-to-br from-orange-500/20 to-orange-700/5 text-orange-400">
                 <s.icon className="h-6 w-6" />
               </span>
               <h3 className="mt-5 font-display text-lg font-bold text-white">

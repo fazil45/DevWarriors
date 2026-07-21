@@ -7,6 +7,10 @@ import axios from "axios";
 import { env } from "../../../../config/env";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
+import SubmissionResultModal, {
+  SubmissionResult,
+} from "../../../../components/Modal/ResultModal";
+import { Loader2 } from "lucide-react";
 
 interface Problem {
   title: string;
@@ -27,8 +31,10 @@ function ChallengePage() {
   const [problemData, setProblemData] = useState<Problem>();
   const [code, setCode] = useState("// write your solution here\n");
   const [language, setLanguage] = useState("typescript");
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [result, setResult] = useState<SubmissionResult>();
 
   const getProblem = async ({ challengeId }: { challengeId: string }) => {
     try {
@@ -41,8 +47,6 @@ function ChallengePage() {
 
       if (response.data.success) {
         setProblemData(response.data.problem);
-        console.log(response.data.problem);
-        console.log(problemData);
       } else {
         toast.error("Refresh again to get problem");
       }
@@ -65,7 +69,7 @@ function ChallengePage() {
     try {
       setSubmitLoading(true);
       const response = await axios.post(
-        `${env.BACKEND_URL}/contest/submit/${contestId}/${challengeId}"`,
+        `${env.BACKEND_URL}/contest/submit/${challengeId}`,
         {
           submission: code,
         },
@@ -75,22 +79,37 @@ function ChallengePage() {
       );
 
       if (response.data.success) {
-        toast.success(response.data.reasoning)
+        toast.success("Challenge Submit successfully");
+        console.log(response.data.result)
+        setResult(response.data.result);
+        console.log(result)
+        setShowModal(true);
+        console.log(showModal);
       } else {
-        toast.error(response.data.error)
+        toast.error(response.data.error);
       }
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            toast.error(error.response?.data.error || "Something went wrong")
-        } else {
-            toast.error("Something went wrong")
-        }
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.error || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setSubmitLoading(false);
     }
   }
 
   return (
     <div className="bg-gray-800">
       <div className="mt-16">
+        {result && (
+            <SubmissionResultModal
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              result={result}
+            />
+        )}
+
         <Group orientation="horizontal" className="min-h-screen">
           <Panel defaultSize={40} minSize={30}>
             <div className="h-full overflow-y-auto p-6 bg-zinc-900">
@@ -173,7 +192,11 @@ function ChallengePage() {
                   onClick={handleSubmit}
                   className="bg-orange-600 text-white text-sm px-4 py-1.5 rounded hover:bg-orange-700 cursor-pointer"
                 >
-                  Submit
+                  {submitLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin transition-all" />
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </div>
 

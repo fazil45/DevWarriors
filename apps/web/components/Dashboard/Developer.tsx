@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowRightIcon } from "lucide-react";
 import axios from "axios";
-import { env } from "../config/env";
+import { env } from "../../config/env";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

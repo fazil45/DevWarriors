@@ -1,7 +1,7 @@
 "use client";
 import { ArrowRight, Flame, Trophy, Users } from "lucide-react";
-import RoleModal from "./RoleModal";
-import { useModal } from "../store/showModal";
+import RoleModal from "../Modal/RoleModal";
+import { useModal } from "../../store/showModal";
 
 const stats = [
   { icon: Users, value: "48K+", label: "Active warriors" },

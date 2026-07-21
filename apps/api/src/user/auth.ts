@@ -297,10 +297,10 @@ export const signin = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
     }
 
-    const token = jwt.sign(userExist.id, JWT_SECRET);
-    console.log(JWT_SECRET);
+    const token = jwt.sign({id:userExist.id}, JWT_SECRET,{expiresIn:'7d'});
+    console.log("JWT TOKEN IS HERE ",JWT_SECRET);
 
-    console.log(token)
+    console.log("TOKEN IS HERE ",token)
     res
       .status(200)
       .cookie("token", token, CookieOption)

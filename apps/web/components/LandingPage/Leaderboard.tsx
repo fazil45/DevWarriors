@@ -81,7 +81,7 @@ export default function Leaderboard() {
               return (
                 <li
                   key={w.rank}
-                  className="grid grid-cols-12 items-center gap-4 border-b border-white/5 px-6 py-4 transition hover:bg-white/[0.03] last:border-0"
+                  className="grid grid-cols-12 items-center gap-4 border-b border-white/5 px-6 py-4 transition hover:bg-white/3 last:border-0"
                 >
                   <div className="col-span-2 flex items-center sm:col-span-1">
                     {m ? (

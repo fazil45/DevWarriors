@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Swords, Menu, X, User2 } from "lucide-react";
-import { useModal } from "../store/showModal";
+import { useModal } from "../../store/showModal";
 import { useRouter } from "next/navigation";
-import { useCurrentUser } from "../hooks/useAuth";
+import { useCurrentUser } from "../../hooks/useAuth";
 
 const links = [
   { id: 1, label: "Contests" },

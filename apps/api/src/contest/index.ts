@@ -160,7 +160,6 @@ export const getContests = async (req: Request, res: Response) => {
       },
     });
 
-
     if (!activeContest) {
       return res
         .status(404)
@@ -335,8 +334,7 @@ export const submitIndependentChallenges = async (
   }
 
   const submission = req.body.submission;
-  const { challengeId } = parsedParamsData.data;
-
+  const challengeId = parsedParamsData.data.challengeId;
   const challenge = await prisma.challenge.findUnique({
     where: {
       id: challengeId,
@@ -353,7 +351,7 @@ export const submitIndependentChallenges = async (
 
   const noctionDocId = await getProblemCached(challenge?.notionDocId!);
 
-  const Res = await validateUserSubmission({
+  const result = await validateUserSubmission({
     problem: noctionDocId,
     submission,
     problemPrompt,
@@ -361,14 +359,14 @@ export const submitIndependentChallenges = async (
 
   await prisma.submission.upsert({
     where: { userId_challengeId: { userId, challengeId } },
-    update: { submission, points: Res.totalScore },
-    create: { submission, points: Res.totalScore, userId, challengeId },
+    update: { submission, points: result.totalScore },
+    create: { submission, points: result.totalScore, userId, challengeId },
   });
 
   res.status(200).json({
     success: true,
     message: "Challenge Submit Successfully",
-    reasoning: Res.reasoning,
+    result: result,
   });
 };
 
@@ -385,7 +383,7 @@ export const submitChallenges = async (req: Request, res: Response) => {
       });
     }
 
-    const { contestId, challengeId } = parsedContestParamsData.data;
+    const { contestId } = parsedContestParamsData.data;
 
     const userId = req.userId;
 
@@ -420,16 +418,6 @@ export const submitChallenges = async (req: Request, res: Response) => {
         success: false,
         error: "Contest has ended",
       });
-    }
-
-    const mapping = await prisma.contestToChallengeMapping.findUnique({
-      where: {
-        contestId_challengeId: { contestId, challengeId },
-      },
-    });
-
-    if (!mapping) {
-      return res.status(404).json({ success: false });
     }
 
     const total = await prisma.contestSubmission.aggregate({

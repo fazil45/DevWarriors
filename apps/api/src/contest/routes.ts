@@ -10,7 +10,7 @@ router.get("/all", getContests)
 router.get("/challenge/:challengeId/problem", getChallengeProblem);
 router.get("/:contestId", getContestById)
 router.get("/challenges/:contestId", getChallengeInContest)
-router.post("/:challengeId",submitIndependentChallenges)
+router.post("/submit/:challengeId",authMiddleware,submitIndependentChallenges)
 router.post("/submit/:contestId/:challengeId", submitChallenges)
 router.get("/leaderboard/:contestId", getContestLeaderboard)
 

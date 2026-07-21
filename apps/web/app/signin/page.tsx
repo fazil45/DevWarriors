@@ -34,6 +34,8 @@ const Signin = () => {
         const response = await axios.post(`${env.BACKEND_URL}/user/signin`, {
           email,
           password,
+        },{
+          withCredentials:true
         });
 
         queryClient.invalidateQueries({
