@@ -5,6 +5,7 @@ import { env } from "../../config/env";
 import { ArrowRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDate, getContestStatus } from "../../config/util";
+import CreateContestModal from "../Modal/CreateContestModal";
 
 interface Contest {
   id: string;
@@ -22,12 +23,15 @@ const Creator = () => {
 
   const fetchContest = async () => {
     try {
-      const response = await axios.get(`${env.BACKEND_URL}/contest/all`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${env.BACKEND_URL}/contest/createdContest`,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (response.data.success) {
-        setContestCreated(response.data.activeContest);
+        setContestCreated(response.data.allContest);
       } else {
         toast.error(response.data.error);
       }
@@ -46,8 +50,9 @@ const Creator = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mt-8">
-        <div className="">
+      <div className="flex items-center justify-between mt-8 mb-6">
+        <CreateContestModal isOpen={true} onClose={() => {}}/>
+        <div>
           <h1 className="text-4xl font-semibold mb-3">My Contests</h1>
           <h4 className="text-md font-normal">
             Create contests and manage their challenges.
@@ -58,6 +63,7 @@ const Creator = () => {
         </button>
       </div>
       <section className="grid grid-cols-3 gap-5">
+
         {contestCreate.map((item) => {
           const contest = getContestStatus({
             startTime: item.startTime,
@@ -122,6 +128,7 @@ const Creator = () => {
             </div>
           );
         })}
+
       </section>
     </div>
   );

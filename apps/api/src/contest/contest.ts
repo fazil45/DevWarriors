@@ -16,7 +16,7 @@ export const createContests = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    if (userId) {
+    if (!userId) {
       return res.status(403).json({ success: false, error: "Unauthenticated" });
     }
 
@@ -33,6 +33,7 @@ export const createContests = async (req: Request, res: Response) => {
 
     const contest = await prisma.contest.create({
       data: {
+        userId,
         title: title,
         startTime: new Date(Date.now() + contestStartTime * 60 * 60 * 1000),
         endTime: new Date(Date.now() + contestEndTime * 60 * 60 * 1000),
@@ -54,7 +55,7 @@ export const createChallenges = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    if (userId) {
+    if (!userId) {
       return res.status(403).json({ success: false, error: "Unauthenticated" });
     }
 
@@ -100,7 +101,7 @@ export const getActiveContests = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    if (userId) {
+    if (!userId) {
       return res.status(403).json({ success: false, error: "Unauthenticated" });
     }
 
@@ -142,18 +143,11 @@ export const getContests = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    if (userId) {
+    if (!userId) {
       return res.status(403).json({ success: false, error: "Unauthenticated" });
     }
 
-    const activeContest = await prisma.contest.findMany({
-      where:{
-        contestToChallengeMapping:{
-          every:{
-
-          }
-        }
-      }
+    const allContest = await prisma.contest.findMany({
       select: {
         id: true,
         title: true,
@@ -167,7 +161,7 @@ export const getContests = async (req: Request, res: Response) => {
       },
     });
 
-    if (!activeContest) {
+    if (!allContest) {
       return res
         .status(404)
         .json({ success: false, error: "NO active contest available" });
@@ -175,7 +169,51 @@ export const getContests = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      activeContest: activeContest,
+      allContest: allContest,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "server error" });
+  }
+};
+
+export const getContestCreatedByDeveloper = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(403).json({ success: false, error: "Unauthenticated" });
+    }
+
+    const allContest = await prisma.contest.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        id: true,
+        title: true,
+        startTime: true,
+        endTime: true,
+        _count: {
+          select: {
+            contestToChallengeMapping: true,
+          },
+        },
+      },
+    });
+
+    if (!allContest) {
+      return res
+        .status(404)
+        .json({ success: false, error: "NO contest available" });
+    }
+
+    res.status(200).json({
+      success: true,
+      allContest: allContest,
     });
   } catch (error) {
     console.error(error);

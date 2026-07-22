@@ -3,7 +3,7 @@ import React from "react";
 interface Button {
   onClick?: () => void;
   children: React.ReactNode | string;
-  className:string;
+  className?:string;
   type: "submit" | "button" | "reset"
 }
 
