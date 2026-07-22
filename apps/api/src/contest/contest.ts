@@ -147,6 +147,13 @@ export const getContests = async (req: Request, res: Response) => {
     }
 
     const activeContest = await prisma.contest.findMany({
+      where:{
+        contestToChallengeMapping:{
+          every:{
+
+          }
+        }
+      }
       select: {
         id: true,
         title: true,

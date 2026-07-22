@@ -38,7 +38,7 @@ export default function Navbar() {
           onClick={() => {
             router.push("/");
           }}
-          className="flex items-center gap-2.5"
+          className="flex items-center gap-2.5 cursor-pointer"
         >
           <span className="relative grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-orange-400 to-orange-600 text-neutral-950">
             <Swords className="h-6 w-6 font-light" strokeWidth={3} />

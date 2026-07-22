@@ -362,6 +362,7 @@ export const me = async (req: Request, res: Response) => {
         firstName: true,
         lastName: true,
         username: true,
+        role:true
       },
     });
 

@@ -5,6 +5,7 @@ import axios from "axios";
 import { env } from "../../config/env";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { formatDate, getContestStatus } from "../../config/util";
 
 
 interface Contest {
@@ -133,43 +134,3 @@ const Developer = () => {
 
 export default Developer;
 
-function getContestStatus({
-  endTime,
-  startTime,
-}: {
-  endTime: string;
-  startTime: string;
-}) {
-  const now = Date.now();
-  const start = new Date(startTime).getTime();
-  const end = new Date(endTime).getTime();
-
-  if (now < start) {
-    return {
-      status: "UPCOMING",
-      label: "Starts in",
-      remaining: start - now,
-    };
-  }
-
-  if (now <= end) {
-    return {
-      status: "ONGOING",
-      label: "Ends in",
-      remaining: end - now,
-    };
-  }
-
-  return {
-    status: "ENDED",
-    label: "Ended",
-    remaining: 0,
-  };
-}
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}

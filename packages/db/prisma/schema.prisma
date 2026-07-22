@@ -20,6 +20,7 @@ model User {
   lastName          String?
   password          String
   role              Role
+  contest           Contest[]
   leaderboard       Leaderboard[]
   emailVerified     Boolean             @default(false)
   emailVerifiedAt   DateTime?
@@ -46,6 +47,8 @@ model Contest {
   startTime                 DateTime
   endTime                   DateTime
   leaderboard               Leaderboard[]
+  userId                    String
+  user                      User                        @relation(references: [id], fields: [userId])
   contestToChallengeMapping ContestToChallengeMapping[]
 }
 
