@@ -36,7 +36,7 @@ export const createContests = async (req: Request, res: Response) => {
         userId,
         title: title,
         startTime: startTime,
-        endTime: endTime
+        endTime: endTime,
       },
     });
 
@@ -358,6 +358,71 @@ export const getChallengeProblem = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: "Failed to load problem" });
+  }
+};
+
+export const deleteContest = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({ success: false, error: "Unauthorized" });
+    }
+
+    const parsedContestParamsData = contestIdParams.safeParse(req.params);
+
+    if (!parsedContestParamsData.success) {
+      return res.status(404).json({
+        success: false,
+        error: parsedContestParamsData.error.message,
+      });
+    }
+
+    const contestId = parsedContestParamsData.data.contestId;
+
+    const contest = await prisma.contest.findUnique({
+      where: {
+        id: contestId,
+      },
+      include: {
+        contestToChallengeMapping: true,
+      },
+    });
+
+    if (!contest) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Contest not found" });
+    }
+
+    if (contest?.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to delete this contest",
+      });
+    }
+
+    if (contest?.contestToChallengeMapping.length > 0) {
+      return res.status(403).json({
+        success: false,
+        error: "Delete challenges in contest first",
+      });
+    }
+
+    await prisma.contest.delete({
+      where: {
+        id: contestId,
+      },
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Contest deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
   }
 };
 

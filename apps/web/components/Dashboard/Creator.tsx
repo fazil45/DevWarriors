@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { env } from "../../config/env";
-import { ArrowRightIcon, TruckElectric } from "lucide-react";
+import { ArrowRightIcon, Trash, Trash2, TruckElectric } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDate, getContestStatus } from "../../config/util";
 import CreateContestModal from "../Modal/CreateContestModal";
@@ -21,6 +21,27 @@ const Creator = () => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [contestCreate, setContestCreated] = useState<Contest[]>([]);
+
+  const deleteContest = async (contestId:string) => {
+    try {
+      const response = await axios.delete(`${env.BACKEND_URL}/contest/${contestId}`,{
+        withCredentials:true
+      })
+
+      if (response.data.success) {
+        toast.success(response.data.message)
+        fetchContest()
+      } else {
+        toast.error(response.data.error)
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.error || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  }
 
   const fetchContest = async () => {
     try {
@@ -122,20 +143,23 @@ const Creator = () => {
                   🏆 {item._count.contestToChallengeMapping * 100} Points
                 </div>
 
-                <button
-                  onClick={() => router.push(`/contest/${item.id}`)}
-                  className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
-                    contest.status === "ENDED"
-                      ? "cursor-not-allowed bg-neutral-800 text-neutral-500"
-                      : "text-orange-400 hover:bg-orange-500 hover:text-black hover:scale-105"
-                  }`}
-                  disabled={contest.status === "ENDED"}
-                >
-                  {contest.status === "ENDED" ? "Finished" : "Enter"}
-                  {contest.status !== "ENDED" && (
-                    <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  )}
-                </button>
+                <div className="flex items-center justify-center gap-2">
+                  <button onClick={() => deleteContest(item.id)}><Trash2 className="h-5 w-5 cursor-pointer hover:text-orange-400"/></button>
+                  <button
+                    onClick={() => router.push(`/contest/${item.id}`)}
+                    className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                      contest.status === "ENDED"
+                        ? "cursor-not-allowed bg-neutral-800 text-neutral-500"
+                        : "text-orange-400 hover:bg-orange-500 hover:text-black hover:scale-105"
+                    }`}
+                    disabled={contest.status === "ENDED"}
+                  >
+                    {contest.status === "ENDED" ? "Finished" : "Enter"}
+                    {contest.status !== "ENDED" && (
+                      <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           );
