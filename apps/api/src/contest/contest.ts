@@ -29,14 +29,14 @@ export const createContests = async (req: Request, res: Response) => {
       });
     }
 
-    const { title, contestStartTime, contestEndTime } = parsedContestData.data;
+    const { title, startTime, endTime } = parsedContestData.data;
 
     const contest = await prisma.contest.create({
       data: {
         userId,
         title: title,
-        startTime: new Date(Date.now() + contestStartTime * 60 * 60 * 1000),
-        endTime: new Date(Date.now() + contestEndTime * 60 * 60 * 1000),
+        startTime: startTime,
+        endTime: endTime
       },
     });
 

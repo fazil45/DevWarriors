@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { env } from "../../config/env";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, TruckElectric } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDate, getContestStatus } from "../../config/util";
 import CreateContestModal from "../Modal/CreateContestModal";
@@ -19,6 +19,7 @@ interface Contest {
 
 const Creator = () => {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
   const [contestCreate, setContestCreated] = useState<Contest[]>([]);
 
   const fetchContest = async () => {
@@ -51,19 +52,30 @@ const Creator = () => {
   return (
     <div>
       <div className="flex items-center justify-between mt-8 mb-6">
-        <CreateContestModal isOpen={true} onClose={() => {}}/>
+        {showModal && (
+          <CreateContestModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onCreated={() => {
+              setShowModal(false);
+              fetchContest(); // refresh the list once, after a real creation
+            }}
+          />
+        )}
         <div>
           <h1 className="text-4xl font-semibold mb-3">My Contests</h1>
           <h4 className="text-md font-normal">
             Create contests and manage their challenges.
           </h4>
         </div>
-        <button className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out">
+        <button
+          onClick={() => setShowModal(true)}
+          className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
+        >
           Create Contest
         </button>
       </div>
       <section className="grid grid-cols-3 gap-5">
-
         {contestCreate.map((item) => {
           const contest = getContestStatus({
             startTime: item.startTime,
@@ -128,7 +140,6 @@ const Creator = () => {
             </div>
           );
         })}
-
       </section>
     </div>
   );

@@ -9,12 +9,11 @@
     }
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
+    "typescript": "^5",
     "zod": "^4.4.3"
   }
 }

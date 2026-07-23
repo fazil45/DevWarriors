@@ -1,4 +1,4 @@
-import { ContestSchema } from "@repo/zodschema";
+import { ContestData, ContestFormInput, ContestSchema } from "@repo/zodschema";
 import { useForm } from "@tanstack/react-form";
 import React, { useEffect } from "react";
 import Input from "../Input";
@@ -11,12 +11,15 @@ import { env } from "../../config/env";
 interface SubmissionResultModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreated:() => void
 }
 
 const CreateContestModal = ({
   isOpen,
   onClose,
+  onCreated
 }: SubmissionResultModalProps) => {
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -31,20 +34,21 @@ const CreateContestModal = ({
       title: "",
       startTime: "",
       endTime: "",
-    },
+    } satisfies ContestFormInput,
     onSubmit: async ({ value }) => {
-      const title = value.title;
-      const startTime = value.startTime;
-      const endTime = value.endTime;
+      const parsed = ContestSchema.safeParse(value);
+
+      if (!parsed.success) {
+        toast.error(parsed.error.issues[0]?.message ?? "Invalid contest data");
+        return;
+      }
+
+      const contestData: ContestData = parsed.data;
 
       try {
         const response = await axios.post(
           `${env.BACKEND_URL}/contest/createContest`,
-          {
-            title,
-            startTime,
-            endTime,
-          },
+          contestData,
           {
             withCredentials: true,
           },
@@ -52,8 +56,9 @@ const CreateContestModal = ({
 
         if (response.data.success) {
           toast.success("Contest created");
+          onCreated()
         } else {
-            toast.error(response.data.error)
+          toast.error(response.data.error);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -62,9 +67,6 @@ const CreateContestModal = ({
           toast.error("Something went wrong");
         }
       }
-    },
-    onSubmitInvalid: () => {
-      toast.error("Please fix the highlighted fields.");
     },
   });
 
@@ -90,12 +92,7 @@ const CreateContestModal = ({
               }}
             >
               {/* Title */}
-              <form.Field
-                name="title"
-                validators={{
-                  onChange: ContestSchema.shape.title,
-                }}
-              >
+              <form.Field name="title">
                 {(field) => (
                   <>
                     <Input
@@ -120,12 +117,7 @@ const CreateContestModal = ({
 
               {/* Dates */}
               <div className="grid grid-cols-2 gap-3">
-                <form.Field
-                  name="startTime"
-                  validators={{
-                    onChange: ContestSchema.shape.contestStartTime,
-                  }}
-                >
+                <form.Field name="startTime">
                   {(field) => (
                     <>
                       <Input
@@ -147,12 +139,7 @@ const CreateContestModal = ({
                   )}
                 </form.Field>
 
-                <form.Field
-                  name="endTime"
-                  validators={{
-                    onChange: ContestSchema.shape.contestEndTime,
-                  }}
-                >
+                <form.Field name="endTime">
                   {(field) => (
                     <>
                       <Input

@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 
 export const UserSignUpSchema = z.object({
   firstName: z
@@ -30,9 +30,12 @@ export const LoginSchema = z.object({
 
 export const ContestSchema = z.object({
   title: z.string().nonempty("Required"),
-  contestStartTime: z.int(),
-  contestEndTime: z.int(),
+  startTime: z.coerce.date(),
+  endTime: z.coerce.date(),
 });
+
+export type ContestFormInput = z.input<typeof ContestSchema>;
+export type ContestData = z.infer<typeof ContestSchema>;  
 
 export const ChallengeSchema = z.object({
   title: z.string().nonempty("Required"),

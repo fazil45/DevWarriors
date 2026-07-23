@@ -70,6 +70,7 @@
         "react-resizable-panels": "^4.12.2",
         "sonner": "^2.0.7",
         "tailwindcss": "^4.3.2",
+        "zod": "4.4.3",
         "zustand": "^5.0.14",
       },
       "devDependencies": {
@@ -153,14 +154,13 @@
     },
     "packages/zodSchema": {
       "name": "@repo/zodschema",
-      "dependencies": {
-        "zod": "^4.4.3",
-      },
       "devDependencies": {
         "@types/bun": "latest",
+        "zod": "^4.4.3",
       },
       "peerDependencies": {
         "typescript": "^5",
+        "zod": "^4.4.3",
       },
     },
   },
