@@ -5,12 +5,6 @@ import { useModal } from "../../store/showModal";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "../../hooks/useAuth";
 
-const links = [
-  { id: 1, label: "Contests" },
-  { id: 2, label: "Challenges" },
-  { id: 3, label: "Leaderboard" },
-];
-
 export default function Navbar() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
@@ -29,7 +23,7 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-white/10 bg-neutral-800/80 backdrop-blur-xl"
+          ? "border-b border-white/10 bg-neutral-800/10 backdrop-blur-xl"
           : "border-b border-transparent"
       }`}
     >
@@ -48,35 +42,27 @@ export default function Navbar() {
           </span>
         </a>
 
-        <div className="hidden items-center gap-1 md:flex">
-          {links.map((l) => (
-            <a
-              key={l.id}
-              className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
-            >
-              {l.label}
-            </a>
-          ))}
+        <div className="flex items-center justify-center gap-4">
+          <a href="/dashboard" className="hover:bg-neutral-500/20 hover:text-orange-400 font-medium px-1 py-1 rounded-md outline-none">Dashboard</a>
+          {user ? (
+            <User2 className="md:block hidden" />
+          ) : (
+            <div className="hidden items-center gap-3 md:flex">
+              <a
+                href="/signin"
+                className="text-sm font-medium text-slate-300 transition hover:text-white"
+              >
+                Sign in
+              </a>
+              <a
+                onClick={() => setShowModal()}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Join the arena
+              </a>
+            </div>
+          )}
         </div>
-
-        {user ? (
-          <User2 />
-        ) : (
-          <div className="hidden items-center gap-3 md:flex">
-            <a
-              href="/signin"
-              className="text-sm font-medium text-slate-300 transition hover:text-white"
-            >
-              Sign in
-            </a>
-            <a
-              onClick={() => setShowModal()}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Join the arena
-            </a>
-          </div>
-        )}
 
         <button
           className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-slate-200 md:hidden"
@@ -90,15 +76,6 @@ export default function Navbar() {
       {open && (
         <div className="border-t border-white/10 bg-ink-900/95 px-5 py-4 md:hidden">
           <div className="flex flex-col gap-1">
-            {links.map((l) => (
-              <a
-                key={l.id}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-white"
-              >
-                {l.label}
-              </a>
-            ))}
             <div className="mt-2 flex gap-3">
               <a
                 href="/siginin"

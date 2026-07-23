@@ -8,9 +8,31 @@ import CTA from "../components/LandingPage/CTA";
 import Footer from "../components/LandingPage/Footer";
 import RoleModal from "../components/Modal/RoleModal";
 import { useModal } from "../store/showModal";
-import SubmissionResultModal from "../components/Modal/ResultModal";
+import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  useEffect(() => {
+    const sections = gsap.utils.toArray<HTMLElement>(".fade-section");
+
+    sections.forEach((section) => {
+      gsap.from(section, {
+        y: 80,
+        opacity: 0,
+        duration: 1,
+        ease: "sine.inOut",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+        },
+      });
+    });
+
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, []);
   const { showModal } = useModal();
   return (
     <div className="min-h-screen bg-neutral-900 scrollbar-none scroll-auto">
@@ -23,24 +45,29 @@ export default function Home() {
       </div>
       <div className={`${showModal ? "hidden" : "block"}`}>
         <main>
-          <div>
+          <section className="fade-section">
             <Hero />
-          </div>
-          <div>
+          </section>
+
+          <section className="fade-section">
             <Contests />
-          </div>
-          <div>
+          </section>
+
+          <section className="fade-section">
             <Challenges />
-          </div>
-          <div>
+          </section>
+
+          <section className="fade-section">
             <Leaderboard />
-          </div>
-          <div>
+          </section>
+
+          <section className="fade-section">
             <HowItWorks />
-          </div>
-          <div>
+          </section>
+
+          <section className="fade-section">
             <CTA />
-          </div>
+          </section>
         </main>
       </div>
       <div className={`${showModal ? "hidden" : "block"}`}>

@@ -3,12 +3,6 @@ import { ArrowRight, Flame, Trophy, Users } from "lucide-react";
 import RoleModal from "../Modal/RoleModal";
 import { useModal } from "../../store/showModal";
 
-const stats = [
-  { icon: Users, value: "48K+", label: "Active warriors" },
-  { icon: Flame, value: "1,204", label: "Challenges solved" },
-  { icon: Trophy, value: "92", label: "Live contests" },
-];
-
 export default function Hero() {
   const { showModal } = useModal();
 
@@ -32,7 +26,7 @@ export default function Hero() {
             Contest season now live
           </span>
 
-          <h1 className="mt-6 font-display  flex flex-col items-center justify-center lg:text-9xl  font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
+          <h1 className="mt-6 font-mono flex flex-col items-center justify-center lg:text-9xl  font-bold leading-28 tracking-tighter text-white sm:text-6xl">
             <span className="flex gap-x-6">
               Where <span className="text-orange-500">coders</span> become
             </span>
@@ -41,7 +35,7 @@ export default function Hero() {
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg font-mono">
             Enter weekly coding contests, battle through curated challenges,
             climb the leaderboard, and earn your place among the elite.
           </p>
@@ -61,23 +55,6 @@ export default function Hero() {
               Browse challenges
             </a>
           </div>
-
-          <dl className="mx-auto mt-14 grid max-w-lg grid-cols-3 gap-4">
-            {stats.map((s) => (
-              <div
-                key={s.label}
-                className="rounded-2xl border border-white/10 bg-neutral-800/70 backdrop-blur-sm px-4 py-5 text-center"
-              >
-                <dt className="flex items-center justify-center text-orange-400">
-                  <s.icon className="h-5 w-5" />
-                </dt>
-                <dd className="mt-2 font-display text-2xl font-bold text-white">
-                  {s.value}
-                </dd>
-                <dd className="mt-0.5 text-xs text-slate-400">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
     </section>

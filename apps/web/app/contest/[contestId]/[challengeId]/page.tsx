@@ -11,6 +11,8 @@ import SubmissionResultModal, {
   SubmissionResult,
 } from "../../../../components/Modal/ResultModal";
 import { Loader2 } from "lucide-react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface Problem {
   title: string;
@@ -68,6 +70,7 @@ function ChallengePage() {
   async function handleSubmit() {
     try {
       setSubmitLoading(true);
+
       const response = await axios.post(
         `${env.BACKEND_URL}/contest/submit/${challengeId}`,
         {
@@ -80,9 +83,9 @@ function ChallengePage() {
 
       if (response.data.success) {
         toast.success("Challenge Submit successfully");
-        console.log(response.data.result)
+        console.log(response.data.result);
         setResult(response.data.result);
-        console.log(result)
+        console.log(result);
         setShowModal(true);
         console.log(showModal);
       } else {
@@ -103,21 +106,51 @@ function ChallengePage() {
     <div className="bg-gray-800">
       <div className="mt-16">
         {result && (
-            <SubmissionResultModal
-              isOpen={showModal}
-              onClose={() => setShowModal(false)}
-              result={result}
-            />
+          <SubmissionResultModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            result={result}
+          />
         )}
 
         <Group orientation="horizontal" className="min-h-screen">
           <Panel defaultSize={40} minSize={30}>
             <div className="h-full overflow-y-auto p-6 bg-zinc-900">
               {loading ? (
-                <p>Loading problem...</p>
+                <SkeletonTheme baseColor="#262626" highlightColor="#404040">
+                  <div className="mx-auto max-w-4xl rounded-md border p-6">
+                    <div className="border-b border-neutral-700 grid grid-cols-2">
+                      <div className="">
+                        <Skeleton width={"50%"} className="mb-2" />
+                        <Skeleton width={"90%"} height={26} className="mb-2" />
+                      </div>
+                      <div className="rounded-md px-2 py-3">
+                        <Skeleton width={"50%"} height={16} />
+                        <Skeleton width={"40%"} height={28} />
+                      </div>
+                    </div>
+                    <div>
+                      <Skeleton
+                        width={"100%"}
+                        height={"35%"}
+                        className="my-4"
+                      />
+                      <Skeleton
+                        width={"100%"}
+                        height={"20%"}
+                        className="mb-2"
+                      />
+                      <Skeleton
+                        width={"100%"}
+                        height={"20%"}
+                        className="mb-2"
+                      />
+                    </div>
+                  </div>
+                </SkeletonTheme>
               ) : (
                 <div className="h-full overflow-y-auto bg-zinc-50 dark:bg-zinc-950 p-6 overflow-hidden">
-                  <div className="mx-auto max-w-4xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                  <div className="mx-auto max-w-4xl rounded-md border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
                     <div className="flex flex-col gap-4 border-b border-zinc-200 pb-6 dark:border-zinc-800 md:flex-row md:items-center md:justify-between">
                       <div>
                         <p className="mb-2 text-sm font-medium uppercase tracking-wider text-orange-500">
@@ -129,7 +162,7 @@ function ChallengePage() {
                         </h1>
                       </div>
 
-                      <div className="rounded-xl border border-orange-200 bg-orange-50 px-2 py-3 dark:border-orange-900 dark:bg-orange-950/40">
+                      <div className="rounded-md border border-orange-200 bg-orange-50 px-2 py-3 dark:border-orange-900 dark:bg-orange-950/40">
                         <p className="text-xs uppercase tracking-wide text-orange-600 dark:text-orange-400">
                           Max Points
                         </p>
