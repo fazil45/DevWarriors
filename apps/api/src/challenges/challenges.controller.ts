@@ -9,6 +9,7 @@ import { type Request, Response } from "express";
 import { validateUserSubmission } from "../service/gemini-client";
 import { getProblemCached } from "@repo/redis";
 
+
 export const createChallenges = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
@@ -240,3 +241,4 @@ export const submitIndependentChallenges = async (
     result: result,
   });
 };
+

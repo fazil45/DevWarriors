@@ -12,6 +12,12 @@ enum Role {
   DEVELOPER
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HIGH
+}
+
 model User {
   id                String              @id @default(uuid())
   email             String              @unique
@@ -28,7 +34,6 @@ model User {
   updatedAt         DateTime            @updatedAt
   otpVerification   OTPVerification?
   submission        Submission[]
-  contestSubmission ContestSubmission[]
 }
 
 model OTPVerification {
@@ -59,6 +64,7 @@ model Challenge {
   challengePrompt           String
   contestId                 String
   maxPoints                 Int
+  difficulty                Difficulty
   contestToChallengeMapping ContestToChallengeMapping[]
   submissions               Submission[]
 }
@@ -68,22 +74,10 @@ model ContestToChallengeMapping {
   contestId         String
   challengeId       String
   index             Int
-  ContestSubmission ContestSubmission[]
   contest           Contest             @relation(fields: [contestId], references: [id])
   challenge         Challenge           @relation(fields: [challengeId], references: [id])
 
   @@unique([contestId, challengeId])
-}
-
-model ContestSubmission {
-  id                          String                    @id @default(uuid())
-  submission                  String
-  contestToChallengeMappingId String
-  userId                      String
-  user                        User                      @relation(fields: [userId], references: [id])
-  points                      Int
-  contestToChallengeMapping   ContestToChallengeMapping @relation(fields: [contestToChallengeMappingId], references: [id])
-  createdAt                   DateTime                  @default(now())
 }
 
 model Submission {
