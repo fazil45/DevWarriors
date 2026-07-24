@@ -28,7 +28,7 @@ const Creator = () => {
   const deleteContest = async (contestId: string) => {
     try {
       const response = await axios.delete(
-        `${env.BACKEND_URL}/contest/${contestId}`,
+        `${env.BACKEND_URL}/contest/delete/${contestId}`,
         {
           withCredentials: true,
         },

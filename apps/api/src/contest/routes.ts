@@ -1,21 +1,25 @@
-import express, { Router } from "express"
-import {  createChallenges, createContests, deleteChallenges, deleteContest, getActiveContests, getChallengeInContest, getChallengeProblem, getContestById, getContestCreatedByDeveloper, getContestLeaderboard,  getContests,  submitChallenges, submitIndependentChallenges} from "./contest"
-import { authMiddleware } from "../middleware/auth.middleware"
-const router:Router = express.Router()
+import express, { Router } from "express";
+import {
+  createContests,
+  deleteContest,
+  getActiveContests,
+  getContestById,
+  getContestCreatedByDeveloper,
+  getContestLeaderboard,
+  getContests,
+  submitContest,
+} from "./contest.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
+const router: Router = express.Router();
 
-router.get("/active", getActiveContests)
-router.get("/all", getContests)
-router.use(authMiddleware)
-router.delete("/delete/:contestId",deleteContest)
-router.delete("/delete/:contestId/:challengeId",deleteChallenges)
-router.get("/createdContest",getContestCreatedByDeveloper)
-router.post("/createContest",createContests)
-router.post("/createChallenges",createChallenges)
-router.get("/challenge/:challengeId/problem", getChallengeProblem);
-router.get("/:contestId", getContestById)
-router.get("/challenges/:contestId", getChallengeInContest)
-router.post("/submit/:challengeId",submitIndependentChallenges)
-router.post("/submit/:contestId/:challengeId", submitChallenges)
-router.get("/leaderboard/:contestId", getContestLeaderboard)
+router.get("/active", getActiveContests);
+router.get("/all", getContests);
+router.use(authMiddleware);
+router.delete("/delete/:contestId", deleteContest);
+router.get("/createdContest", getContestCreatedByDeveloper);
+router.post("/createContest", createContests);
+router.get("/:contestId", getContestById);
+router.post("/submit/:contestId/:challengeId", submitContest);
+router.get("/leaderboard/:contestId", getContestLeaderboard);
 
-export default router
+export default router;

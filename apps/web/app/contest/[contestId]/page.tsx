@@ -46,7 +46,7 @@ const Contest = () => {
   }) => {
     try {
       const response = await axios.delete(
-        `${env.BACKEND_URL}/contest/delete/${contestId}/${challengeId}`,
+        `${env.BACKEND_URL}/challenge/delete/${contestId}/${challengeId}`,
         {
           withCredentials: true,
         },
@@ -72,7 +72,7 @@ const Contest = () => {
   const fetchChallengesInContest = async (contestId: string) => {
     try {
       const response = await axios.get(
-        `${env.BACKEND_URL}/contest/challenges/${contestId}`,
+        `${env.BACKEND_URL}/challenge/${contestId}`,
         {
           withCredentials: true,
         },

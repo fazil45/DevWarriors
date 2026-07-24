@@ -1,7 +1,6 @@
 "use client";
 import Hero from "../components/LandingPage/Hero";
-import Contests from "../components/Contests";
-import Challenges from "../components/Challenges";
+import Contests from "../components/Contests";  
 import Leaderboard from "../components/LandingPage/Leaderboard";
 import HowItWorks from "../components/LandingPage/HowItWorks";
 import CTA from "../components/LandingPage/CTA";
@@ -51,10 +50,6 @@ export default function Home() {
 
           <section className="fade-section">
             <Contests />
-          </section>
-
-          <section className="fade-section">
-            <Challenges />
           </section>
 
           <section className="fade-section">

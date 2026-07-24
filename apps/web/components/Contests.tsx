@@ -5,7 +5,6 @@ type Contest = {
   tag: string;
   status: "Live" | "Upcoming" | "Featured";
   startsIn: string;
-  participants: string;
   difficulty: string;
   accent: string;
 };
@@ -16,7 +15,6 @@ const contests: Contest[] = [
     tag: "Algorithms",
     status: "Live",
     startsIn: "Ends in 2d 14h",
-    participants: "3.2K",
     difficulty: "Hard",
     accent: "from-orange-500/20 to-orange-700/5",
   },
@@ -25,7 +23,6 @@ const contests: Contest[] = [
     tag: "UI / UX",
     status: "Featured",
     startsIn: "Starts in 3 days",
-    participants: "1.8K",
     difficulty: "Medium",
     accent: "from-orange-500/20 to-orange-600/5",
   },
@@ -34,7 +31,6 @@ const contests: Contest[] = [
     tag: "Low-level",
     status: "Upcoming",
     startsIn: "Starts in 9 days",
-    participants: "920",
     difficulty: "Expert",
     accent: "from-blue-500/20 to-blue-600/5",
   },
@@ -100,9 +96,6 @@ export default function Contests() {
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-400">
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-slate-500" /> {c.startsIn}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Users className="h-4 w-4 text-slate-500" /> {c.participants}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Zap className="h-4 w-4 text-slate-500" /> {c.difficulty}

@@ -60,7 +60,7 @@ export default function Leaderboard() {
             </h2>
             <p className="mt-3 max-w-xl text-slate-400">
               Ranking points are earned by solving challenges and placing in
-              contests. Season resets every 8 weeks.
+              contests.
             </p>
           </div>
           <span className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-400">

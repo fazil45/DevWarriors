@@ -6,6 +6,7 @@ import Button from "../Button";
 import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { env } from "../../config/env";
+import { toast } from "sonner";
 
 interface SubmissionResultModalProps {
   contestId: string;
@@ -44,9 +45,36 @@ const CreateChallengeModal = ({
     },
     onSubmit: async ({ value }) => {
       try {
+        const title = value.title;
+        const notionDocId = value.notionDocId;
+        const maxPoints = Number(value.maxPoints);
+        const index = Number(value.index);
+        const challengePrompt = value.challengePrompt;
+
         setLoading(true);
-        const response = await axios.post(`${env.BACKEND_URL}/contest/`);
-      } catch (error) {}
+        const response = await axios.post(
+          `${env.BACKEND_URL}/challenge/createChallenges`,
+          {
+            title,
+            notionDocId,
+            maxPoints,
+            contestId,
+            index,
+            challengePrompt,
+          },
+          {
+            withCredentials: true,
+          },
+        );
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data.error || "Something went wrong");
+        } else {
+          toast.error("Something went wrong");
+        }
+      } finally {
+        setLoading(false)
+      }
     },
   });
   return (
@@ -156,7 +184,9 @@ const CreateChallengeModal = ({
               <form.Field name="challengePrompt">
                 {(field) => (
                   <div className="flex flex-col gap-2">
-                    <label className="font-semibold">Enter Submission prompt</label>
+                    <label className="font-semibold">
+                      Enter Submission prompt
+                    </label>
                     <textarea
                       placeholder="Prompt to check the solution of challenge"
                       value={field.state.value}

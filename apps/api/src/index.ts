@@ -2,9 +2,9 @@ import express from "express"
 const app: express.Express = express()
 import userRouter from "./user/routes"
 import contestRouter from "./contest/routes"
+import challengeRouter from "./challenges/routes"
 import cookieParser from "cookie-parser"
 import cors from "cors"
-import { authMiddleware } from "./middleware/auth.middleware"
 
 app.use(cors({
     origin:"http://localhost:3000",
@@ -18,6 +18,7 @@ app.use(express.json())
 
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/contest",contestRouter)
+app.use("/api/v1/challenge",challengeRouter)
 
 
 export default app

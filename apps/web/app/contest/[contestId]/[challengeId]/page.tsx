@@ -41,7 +41,7 @@ function ChallengePage() {
   const getProblem = async ({ challengeId }: { challengeId: string }) => {
     try {
       const response = await axios.get<GetProblemResponse>(
-        `${env.BACKEND_URL}/contest/challenge/${challengeId}/problem`,
+        `${env.BACKEND_URL}/challenge/${challengeId}/problem`,
         {
           withCredentials: true,
         },
@@ -72,7 +72,7 @@ function ChallengePage() {
       setSubmitLoading(true);
 
       const response = await axios.post(
-        `${env.BACKEND_URL}/contest/submit/${challengeId}`,
+        `${env.BACKEND_URL}/challenge/submit/${challengeId}`,
         {
           submission: code,
         },

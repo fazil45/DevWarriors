@@ -20,6 +20,7 @@ function SubmissionResultModal({
   onClose,
   result,
 }: SubmissionResultModalProps) {
+  
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
