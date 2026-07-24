@@ -1,109 +1,74 @@
-"use client";
-import { ContestData, ContestFormInput, ContestSchema } from "@repo/zodschema";
 import { useForm } from "@tanstack/react-form";
 import React, { useEffect, useState } from "react";
+import { FieldError } from "../FieldError";
 import Input from "../Input";
 import Button from "../Button";
-import { FieldError } from "../FieldError";
-import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { env } from "../../config/env";
-import { Loader2 } from "lucide-react";
 
 interface SubmissionResultModalProps {
+  contestId: string;
   isOpen: boolean;
   onClose: () => void;
-  onCreated: () => void;
+  onCreated: (contestId: string) => void;
 }
 
-const CreateContestModal = ({
+const CreateChallengeModal = ({
   isOpen,
   onClose,
+  contestId,
   onCreated,
 }: SubmissionResultModalProps) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
+
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     window.addEventListener("keydown", handleKey);
+
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
   const form = useForm({
     defaultValues: {
       title: "",
-      startTime: "",
-      endTime: "",
-    } satisfies ContestFormInput,
+      notionDocId: "",
+      challengePrompt: "",
+      index: "",
+      maxPoints: "",
+    },
     onSubmit: async ({ value }) => {
-      const parsed = ContestSchema.safeParse(value);
-
-      if (!parsed.success) {
-        toast.error(parsed.error.issues[0]?.message ?? "Invalid contest data");
-        return;
-      }
-
-      const contestData: ContestData = parsed.data;
-
       try {
         setLoading(true);
-        const response = await axios.post(
-          `${env.BACKEND_URL}/contest/createContest`,
-          contestData,
-          {
-            withCredentials: true,
-          },
-        );
-
-        if (response.data.success) {
-          toast.success("Contest created");
-          onCreated();
-        } else {
-          toast.error(response.data.error);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data.error || "Something went wrong");
-        } else {
-          toast.error("Something went wrong");
-        }
-      } finally {
-        setLoading(false);
-      }
+        const response = await axios.post(`${env.BACKEND_URL}/contest/`);
+      } catch (error) {}
     },
   });
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md mx-4 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-md mx-4 bg-zinc-900 border border-zinc-700 rounded-md shadow-2xl">
         <div className="flex flex-col items-center justify-center p-4">
           <div className="text-3xl font-semibold text-center mb-4">
-            Create Contest
+            Create Challenges
           </div>
           <div>
             <form
-              className="space-y-4"
               onSubmit={(e) => {
                 e.preventDefault();
                 form.handleSubmit();
               }}
             >
-              {/* Title */}
               <form.Field name="title">
                 {(field) => (
                   <>
                     <Input
-                      label="Contest Title"
-                      placeholder="Weekly Backend Challenge"
+                      label="Challenge Title"
+                      placeholder="Do some challenges"
                       type="text"
                       value={field.state.value}
                       onBlur={field.handleBlur}
@@ -120,15 +85,36 @@ const CreateContestModal = ({
                   </>
                 )}
               </form.Field>
-
-              {/* Dates */}
-              <div className="grid grid-cols-2 gap-3">
-                <form.Field name="startTime">
+              <form.Field name="notionDocId">
+                {(field) => (
+                  <>
+                    <Input
+                      label="Enter your problem ID"
+                      placeholder="Notion page id "
+                      type="text"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      className="h-10 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-sm text-white placeholder:text-zinc-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30"
+                    />
+                    <FieldError
+                      errors={
+                        field.state.meta.errors.filter(
+                          (e) => e !== undefined,
+                        ) as (string | { message: string })[]
+                      }
+                    />
+                  </>
+                )}
+              </form.Field>
+              <div className="flex items-center justify-center gap-4">
+                <form.Field name="maxPoints">
                   {(field) => (
                     <>
                       <Input
-                        label="Starts"
-                        type="datetime-local"
+                        label="Points"
+                        placeholder="Enter points"
+                        type="number"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -144,13 +130,13 @@ const CreateContestModal = ({
                     </>
                   )}
                 </form.Field>
-
-                <form.Field name="endTime">
+                <form.Field name="index">
                   {(field) => (
                     <>
                       <Input
-                        label="Ends"
-                        type="datetime-local"
+                        label="Challenge number"
+                        placeholder="Enter challenge number"
+                        type="number"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -167,12 +153,32 @@ const CreateContestModal = ({
                   )}
                 </form.Field>
               </div>
-
+              <form.Field name="challengePrompt">
+                {(field) => (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-semibold">Enter Submission prompt</label>
+                    <textarea
+                      placeholder="Prompt to check the solution of challenge"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      className="h-10 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-white placeholder:text-zinc-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 min-h-30 outline-none"
+                    />
+                    <FieldError
+                      errors={
+                        field.state.meta.errors.filter(
+                          (e) => e !== undefined,
+                        ) as (string | { message: string })[]
+                      }
+                    />
+                  </div>
+                )}
+              </form.Field>
               <Button type="submit" className="mt-2 h-11 w-full rounded-lg">
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Create Contest"
+                  "Create Challenge"
                 )}
               </Button>
             </form>
@@ -183,4 +189,4 @@ const CreateContestModal = ({
   );
 };
 
-export default CreateContestModal;
+export default CreateChallengeModal;

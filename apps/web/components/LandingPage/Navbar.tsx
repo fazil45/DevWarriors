@@ -43,7 +43,12 @@ export default function Navbar() {
         </a>
 
         <div className="flex items-center justify-center gap-4">
-          <a href="/dashboard" className="hover:bg-neutral-500/20 hover:text-orange-400 font-medium px-1 py-1 rounded-md outline-none">Dashboard</a>
+          <a
+            href="/dashboard"
+            className="hover:bg-neutral-500/20 hover:text-orange-400 font-medium px-1 py-1 rounded-md outline-none"
+          >
+            Dashboard
+          </a>
           {user ? (
             <User2 className="md:block hidden" />
           ) : (

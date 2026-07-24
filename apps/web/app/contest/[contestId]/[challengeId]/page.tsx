@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { env } from "../../../../config/env";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import SubmissionResultModal, {
   SubmissionResult,
 } from "../../../../components/Modal/ResultModal";

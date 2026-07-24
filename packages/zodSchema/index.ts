@@ -46,7 +46,7 @@ export const ChallengeSchema = z.object({
   index: z.number(),
 });
 
-export const contestSubmissionParamSchema = z.object({
+export const IDParamsSchema = z.object({
   contestId: z.string().nonempty("Required"),
   challengeId: z.string().nonempty("Required"),
 });

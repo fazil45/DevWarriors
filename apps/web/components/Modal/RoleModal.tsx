@@ -27,9 +27,7 @@ const RoleModal = () => {
 
         {/* Heading */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white">
-            Create your account
-          </h1>
+          <h1 className="text-3xl font-bold text-white">Create your account</h1>
 
           <p className="mt-2 text-sm text-neutral-400">
             Choose how you want to join the platform.

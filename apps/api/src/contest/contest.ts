@@ -5,7 +5,7 @@ import {
   ChallengeSchema,
   contestIdParams,
   ContestSchema,
-  contestSubmissionParamSchema,
+  IDParamsSchema,
   LeaderboardSchema,
 } from "@repo/zodschema";
 import { type Request, Response } from "express";
@@ -426,6 +426,51 @@ export const deleteContest = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteChallenges = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: "Unauthenticated",
+      });
+    }
+
+    const parsedParamsData = IDParamsSchema.safeParse(req.params);
+
+    if (!parsedParamsData.success) {
+      return res.status(404).json({
+        success: false,
+        error: "Invalid inputs",
+      });
+    }
+
+    console.log(parsedParamsData)
+
+    const { challengeId, contestId } = parsedParamsData.data;
+
+    await prisma.contestToChallengeMapping.delete({
+      where:{
+        contestId_challengeId:{contestId,challengeId}
+      }
+    })
+
+    await prisma.challenge.delete({
+      where: {
+        id: challengeId,
+        contestId: contestId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+};
+
 export const submitIndependentChallenges = async (
   req: Request,
   res: Response,
@@ -482,9 +527,7 @@ export const submitIndependentChallenges = async (
 
 export const submitChallenges = async (req: Request, res: Response) => {
   try {
-    const parsedContestParamsData = contestSubmissionParamSchema.safeParse(
-      req.params,
-    );
+    const parsedContestParamsData = IDParamsSchema.safeParse(req.params);
 
     if (!parsedContestParamsData.success) {
       return res.status(400).json({

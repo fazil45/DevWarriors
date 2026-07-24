@@ -27,7 +27,7 @@ const contests: Contest[] = [
     startsIn: "Starts in 3 days",
     participants: "1.8K",
     difficulty: "Medium",
-    accent: "from-emerald-500/20 to-emerald-600/5",
+    accent: "from-orange-500/20 to-orange-600/5",
   },
   {
     title: "Systems Siege",
@@ -43,7 +43,7 @@ const contests: Contest[] = [
 const statusStyles: Record<Contest["status"], string> = {
   Live: "bg-orange-500/15 text-orange-300 border-orange-500/30",
   Upcoming: "bg-blue-500/15 text-blue-300 border-slate-blue/20",
-  Featured: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  Featured: "bg-orange-500/15 text-orange-400 border-orange-500/30",
 };
 
 export default function Contests() {

@@ -89,7 +89,7 @@ const Creator = () => {
             onClose={() => setShowModal(false)}
             onCreated={() => {
               setShowModal(false);
-              fetchContest(); // refresh the list once, after a real creation
+              fetchContest();
             }}
           />
         )}
@@ -138,7 +138,7 @@ const Creator = () => {
               return (
                 <div
                   key={item.id}
-                  className="group w-full rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-900/30"
+                  className="group w-full rounded-md border border-neutral-800 bg-neutral-900 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-900/30"
                 >
                   <div className="mb-3 flex items-center justify-between text-sm">
                     <div
