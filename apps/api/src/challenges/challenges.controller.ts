@@ -9,6 +9,9 @@ import { type Request, Response } from "express";
 import { validateUserSubmission } from "../service/gemini-client";
 import { getProblemCached } from "@repo/redis";
 
+type Difficulty = "EASY" | "MEDIUM" | "HIGH"
+
+
 
 export const createChallenges = async (req: Request, res: Response) => {
   try {
@@ -24,7 +27,11 @@ export const createChallenges = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
     }
 
-    const { contestId, index, maxPoints, notionDocId, title, challengePrompt } =
+    console.log(parsedChallengeData.error)    
+    console.log(parsedChallengeData)    
+
+
+    const { contestId, index, maxPoints, notionDocId, title, challengePrompt,difficulty } =
       parsedChallengeData.data;
 
     const challenge = await prisma.$transaction(async (tx) => {
@@ -35,6 +42,7 @@ export const createChallenges = async (req: Request, res: Response) => {
           notionDocId,
           title,
           challengePrompt,
+          difficulty: difficulty as Difficulty,
           contestToChallengeMapping: {
             create: {
               index,

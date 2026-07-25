@@ -41,9 +41,10 @@ export const ChallengeSchema = z.object({
   title: z.string().nonempty("Required"),
   notionDocId: z.string().nonempty("Required"),
   contestId: z.string().nonempty("Required"),
-  challengePrompt:z.string().nonempty(""),
+  challengePrompt: z.string().nonempty("REQUIRED"),
   maxPoints: z.number(),
   index: z.number(),
+  difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
 });
 
 export const IDParamsSchema = z.object({

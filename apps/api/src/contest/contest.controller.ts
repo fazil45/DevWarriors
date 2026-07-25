@@ -354,7 +354,7 @@ export const submitContest = async (req: Request, res: Response) => {
       });
     }
 
-    const total = await prisma.contestSubmission.aggregate({
+    const total = await prisma.submission.aggregate({
       where: {
         userId,
         contestToChallengeMapping: { contestId },
