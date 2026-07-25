@@ -7,8 +7,11 @@ import { toast } from "sonner";
 import {
   ArrowLeftIcon,
   ArrowRight,
+  Award,
   Clock3,
   Code2,
+  Crown,
+  Medal,
   Trash2,
   Trophy,
 } from "lucide-react";
@@ -21,21 +24,55 @@ interface Challenge {
   id: string;
   title: string;
   maxPoints: number;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
   contestToChallengeMapping: {
     contest: {
       title: string;
     };
   }[];
 }
+
+interface Leaderboard {
+  rank: number;
+  points: number;
+  username: string;
+}
+
 const Contest = () => {
   const params = useParams();
   const router = useRouter();
   const contestId = params.contestId as string;
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const { data: user } = useCurrentUser();
   const isCreator = user?.role === "CREATOR";
+
+  const handleSubmit = async () => {};
+
+  const getLeaderboard = async (contestId: string) => {
+    try {
+      const response = await axios.get(
+        `${env.BACKEND_URL}/contest/leaderboard/${contestId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.success) {
+        setLeaderboard(response.data.leaderboard);
+      } else {
+        toast.error(response.data.error);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.error || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
 
   const handleDelete = async ({
     contestId,
@@ -80,6 +117,7 @@ const Contest = () => {
 
       if (response.data.success) {
         setChallenges(response.data.challenges);
+        console.log(response.data.challenges);
       } else {
         toast.error("challenges not found");
       }
@@ -104,6 +142,7 @@ const Contest = () => {
 
   useEffect(() => {
     fetchChallengesInContest(contestId);
+    getLeaderboard(contestId);
   }, []);
 
   return (
@@ -126,17 +165,24 @@ const Contest = () => {
             <ArrowLeftIcon className="h-4 w-4 transition-transform duration-300 group-hover:text-orange-400 group-hover:translate-x-1" />{" "}
             Back to Contest
           </a>
-          {isCreator && (
+          {isCreator ? (
             <button
               onClick={() => setShowModal(true)}
               className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
             >
               Create Challenge
             </button>
+          ) : (
+            <button
+              onClick={() => handleSubmit()}
+              className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
+            >
+              Submit contest
+            </button>
           )}
         </div>
         <div className="mt-4">
-          <h1 className="text-xl font-medium">
+          <h1 className="text-4xl font-bold mb-4">
             {loading ? (
               <Skeleton
                 width={"10%"}
@@ -149,6 +195,75 @@ const Contest = () => {
             )}
           </h1>
         </div>
+        <div>
+          <div className="mx-auto w-full max-w-7xl sm:px-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-300">
+                  Leaderboard
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  The top warriors
+                </h2>
+                <p className="mt-3 max-w-xl text-slate-400">
+                  Ranking points are earned by solving challenges and placing in
+                  contests.
+                </p>
+              </div>
+              <span className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-400">
+                Season 0
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-ink-850/80 backdrop-blur-sm mt-10 overflow-hidden">
+              <div className="hidden grid-cols-12 gap-4 border-b border-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 sm:grid">
+                <div className="col-span-2">Rank</div>
+                <div className="col-span-4">Warrior</div>
+                <div className="col-span-6 text-right">Points</div>
+              </div>
+              <ul>
+                {leaderboard.map((w) => {
+                  const m = medal(w.rank);
+                  return (
+                    <li
+                      key={w.rank}
+                      className="grid grid-cols-12 items-center gap-4 border-b border-white/5 px-6 py-4 transition hover:bg-white/3 last:border-0"
+                    >
+                      <div className="col-span-2 flex items-center sm:col-span-1">
+                        {m ? (
+                          <m.icon className={`h-5 w-5 ${m.cls}`} />
+                        ) : (
+                          <span className="font-display text-sm font-semibold text-slate-500">
+                            {w.rank}
+                          </span>
+                        )}
+                      </div>
+                      <div className="col-span-4 sm:col-span-5">
+                        <div className="flex items-center gap-3">
+                          <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-ink-700 to-ink-800 font-display text-sm font-bold text-orange-300">
+                            {w.username?.slice(0, 2).toUpperCase()}
+                          </span>
+                          <div>
+                            <p className="font-medium text-white">
+                              {w.username}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-span-6 hidden text-right font-display font-semibold text-white sm:block">
+                        {w.points.toLocaleString()}
+                      </div>
+                      <div className="col-span-1 hidden items-center justify-end gap-1 text-right sm:flex"></div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-300 my-4">
+          Challenges
+        </span>
         <div className="grid grid-cols-3 gap-4 m-4">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
@@ -185,8 +300,10 @@ const Contest = () => {
                       </div>
                     </div>
 
-                    <div className="rounded-md bg-green-500/10 px-3 py-1 text-xs font-medium text-green-400">
-                      {"Easy"}
+                    <div
+                      className={`rounded-md px-3 py-1 text-xs font-medium ${item.difficulty === "EASY" && "text-green-400 bg-green-500/10"} ${item.difficulty === "MEDIUM" && "text-yellow-400 bg-yellow-500/10"} ${item.difficulty === "HARD" && "text-red-400 bg-red-500/10"}`}
+                    >
+                      {item.difficulty}
                     </div>
                   </div>
                   <div className="mt-6 flex gap-3">
@@ -243,3 +360,10 @@ const Contest = () => {
 };
 
 export default Contest;
+
+const medal = (rank: number) => {
+  if (rank === 1) return { icon: Crown, cls: "text-orange-400" };
+  if (rank === 2) return { icon: Medal, cls: "text-slate-300" };
+  if (rank === 3) return { icon: Award, cls: "text-amber-700" };
+  return null;
+};

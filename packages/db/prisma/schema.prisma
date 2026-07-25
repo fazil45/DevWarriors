@@ -15,25 +15,25 @@ enum Role {
 enum Difficulty {
   EASY
   MEDIUM
-  HIGH
+  HARD
 }
 
 model User {
-  id                String              @id @default(uuid())
-  email             String              @unique
-  username          String              @unique
-  firstName         String
-  lastName          String?
-  password          String
-  role              Role
-  contest           Contest[]
-  leaderboard       Leaderboard[]
-  emailVerified     Boolean             @default(false)
-  emailVerifiedAt   DateTime?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  otpVerification   OTPVerification?
-  submission        Submission[]
+  id              String           @id @default(uuid())
+  email           String           @unique
+  username        String           @unique
+  firstName       String
+  lastName        String?
+  password        String
+  role            Role
+  contest         Contest[]
+  leaderboard     Leaderboard[]
+  emailVerified   Boolean          @default(false)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  otpVerification OTPVerification?
+  submission      Submission[]
 }
 
 model OTPVerification {
@@ -70,12 +70,12 @@ model Challenge {
 }
 
 model ContestToChallengeMapping {
-  id                String              @id @default(uuid())
-  contestId         String
-  challengeId       String
-  index             Int
-  contest           Contest             @relation(fields: [contestId], references: [id])
-  challenge         Challenge           @relation(fields: [challengeId], references: [id])
+  id          String    @id @default(uuid())
+  contestId   String
+  challengeId String
+  index       Int
+  contest     Contest   @relation(fields: [contestId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
 
   @@unique([contestId, challengeId])
 }

@@ -21,8 +21,9 @@ const CreateChallengeModal = ({
   contestId,
   onCreated,
 }: SubmissionResultModalProps) => {
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     if (!isOpen) return;
 
@@ -87,6 +88,7 @@ const CreateChallengeModal = ({
       }
     },
   });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-md mx-4 bg-zinc-900 border border-zinc-700 rounded-md shadow-2xl">

@@ -308,12 +308,12 @@ export const deleteContest = async (req: Request, res: Response) => {
 
 export const submitContest = async (req: Request, res: Response) => {
   try {
-    const parsedContestParamsData = IDParamsSchema.safeParse(req.params);
+    const parsedContestParamsData = contestIdParams.safeParse(req.params);
 
     if (!parsedContestParamsData.success) {
       return res.status(400).json({
         success: false,
-        error: parsedContestParamsData.error.flatten(),
+        error: "invalid Id",
       });
     }
 
@@ -357,7 +357,11 @@ export const submitContest = async (req: Request, res: Response) => {
     const total = await prisma.submission.aggregate({
       where: {
         userId,
-        contestToChallengeMapping: { contestId },
+        challenge: {
+          contestToChallengeMapping: {
+            some: { contestId },
+          },
+        },
       },
       _sum: { points: true },
     });

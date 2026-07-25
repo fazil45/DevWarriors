@@ -3,39 +3,34 @@ import { Crown, Medal, Award } from "lucide-react";
 const warriors = [
   {
     rank: 1,
-    name: "KiraHashimoto",
+    username: "KiraHashimoto",
     points: 18,
-    solved: 412,
+
   },
   {
     rank: 2,
-    name: "voidRunner",
+    username: "voidRunner",
     points: 14,
-    solved: 398,
   },
   {
     rank: 3,
-    name: "quantumByte",
+    username: "quantumByte",
     points: 17,
-    solved: 376,
   },
   {
     rank: 4,
-    name: "neoSamurai",
+    username: "neoSamurai",
     points: 16,
-    solved: 32,
   },
   {
     rank: 5,
     name: "binaryPhoenix",
     points: 15,
-    solved: 34,
   },
   {
     rank: 6,
-    name: "cipherWolf",
+    username: "cipherWolf",
     points: 15110,
-    solved: 322,
   },
 ];
 
@@ -73,7 +68,6 @@ export default function Leaderboard() {
             <div className="col-span-1">Rank</div>
             <div className="col-span-5">Warrior</div>
             <div className="col-span-3 text-right">Points</div>
-            <div className="col-span-3 text-right lg:mr-24">Solved</div>
           </div>
           <ul>
             {warriors.map((w) => {
@@ -95,21 +89,15 @@ export default function Leaderboard() {
                   <div className="col-span-10 sm:col-span-5">
                     <div className="flex items-center gap-3">
                       <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-ink-700 to-ink-800 font-display text-sm font-bold text-orange-300">
-                        {w.name.slice(0, 2).toUpperCase()}
+                        {w.username?.slice(0, 2).toUpperCase()}
                       </span>
                       <div>
-                        <p className="font-medium text-white">{w.name}</p>
-                        <p className="text-xs text-slate-500 sm:hidden">
-                          {w.points.toLocaleString()} pts · {w.solved} solved
-                        </p>
+                        <p className="font-medium text-white">{w.username}</p>
                       </div>
                     </div>
                   </div>
                   <div className="col-span-3 hidden text-right font-display font-semibold text-white sm:block">
                     {w.points.toLocaleString()}
-                  </div>
-                  <div className="col-span-2 hidden text-right text-slate-400 sm:block">
-                    {w.solved}
                   </div>
                   <div className="col-span-1 hidden items-center justify-end gap-1 text-right sm:flex"></div>
                 </li>

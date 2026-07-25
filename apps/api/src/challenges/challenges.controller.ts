@@ -9,7 +9,7 @@ import { type Request, Response } from "express";
 import { validateUserSubmission } from "../service/gemini-client";
 import { getProblemCached } from "@repo/redis";
 
-type Difficulty = "EASY" | "MEDIUM" | "HIGH"
+type Difficulty = "EASY" | "MEDIUM" | "HARD"
 
 
 
@@ -84,6 +84,7 @@ export const getChallengeInContest = async (req: Request, res: Response) => {
         id: true,
         title: true,
         maxPoints: true,
+        difficulty:true,
         contestToChallengeMapping: {
           select: {
             contest: {
