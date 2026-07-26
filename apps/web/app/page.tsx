@@ -1,6 +1,6 @@
 "use client";
 import Hero from "../components/LandingPage/Hero";
-import Contests from "../components/Contests";  
+import Contests from "../components/Contests";
 import Leaderboard from "../components/LandingPage/Leaderboard";
 import HowItWorks from "../components/LandingPage/HowItWorks";
 import CTA from "../components/LandingPage/CTA";

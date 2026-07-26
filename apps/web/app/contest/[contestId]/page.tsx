@@ -11,6 +11,7 @@ import {
   Clock3,
   Code2,
   Crown,
+  Loader2,
   Medal,
   Trash2,
   Trophy,
@@ -49,7 +50,31 @@ const Contest = () => {
   const { data: user } = useCurrentUser();
   const isCreator = user?.role === "CREATOR";
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${env.BACKEND_URL}/contest/submit/${contestId}`,
+        {},
+        { withCredentials: true },
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.success);
+        window.location.reload();
+      } else {
+        toast.error(response.data.error);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.error || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getLeaderboard = async (contestId: string) => {
     try {
@@ -62,6 +87,8 @@ const Contest = () => {
 
       if (response.data.success) {
         setLeaderboard(response.data.leaderboard);
+      } else if (response.data.empty) {
+        toast.success(response.data.message);
       } else {
         toast.error(response.data.error);
       }
@@ -177,7 +204,11 @@ const Contest = () => {
               onClick={() => handleSubmit()}
               className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
             >
-              Submit contest
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                "Submit contest"
+              )}
             </button>
           )}
         </div>
@@ -222,41 +253,42 @@ const Contest = () => {
                 <div className="col-span-6 text-right">Points</div>
               </div>
               <ul>
-                {leaderboard.map((w) => {
-                  const m = medal(w.rank);
-                  return (
-                    <li
-                      key={w.rank}
-                      className="grid grid-cols-12 items-center gap-4 border-b border-white/5 px-6 py-4 transition hover:bg-white/3 last:border-0"
-                    >
-                      <div className="col-span-2 flex items-center sm:col-span-1">
-                        {m ? (
-                          <m.icon className={`h-5 w-5 ${m.cls}`} />
-                        ) : (
-                          <span className="font-display text-sm font-semibold text-slate-500">
-                            {w.rank}
-                          </span>
-                        )}
-                      </div>
-                      <div className="col-span-4 sm:col-span-5">
-                        <div className="flex items-center gap-3">
-                          <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-ink-700 to-ink-800 font-display text-sm font-bold text-orange-300">
-                            {w.username?.slice(0, 2).toUpperCase()}
-                          </span>
-                          <div>
-                            <p className="font-medium text-white">
-                              {w.username}
-                            </p>
+                {leaderboard &&
+                  leaderboard.map((w) => {
+                    const m = medal(w.rank);
+                    return (
+                      <li
+                        key={w.rank}
+                        className="grid grid-cols-12 items-center gap-4 border-b border-white/5 px-6 py-4 transition hover:bg-white/3 last:border-0"
+                      >
+                        <div className="col-span-2 flex items-center sm:col-span-1">
+                          {m ? (
+                            <m.icon className={`h-5 w-5 ${m.cls}`} />
+                          ) : (
+                            <span className="font-display text-sm font-semibold text-slate-500">
+                              {w.rank}
+                            </span>
+                          )}
+                        </div>
+                        <div className="col-span-4 sm:col-span-5">
+                          <div className="flex items-center gap-3">
+                            <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-ink-700 to-ink-800 font-display text-sm font-bold text-orange-300">
+                              {w.username?.slice(0, 2).toUpperCase()}
+                            </span>
+                            <div>
+                              <p className="font-medium text-white">
+                                {w.username}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="col-span-6 hidden text-right font-display font-semibold text-white sm:block">
-                        {w.points.toLocaleString()}
-                      </div>
-                      <div className="col-span-1 hidden items-center justify-end gap-1 text-right sm:flex"></div>
-                    </li>
-                  );
-                })}
+                        <div className="col-span-6 hidden text-right font-display font-semibold text-white sm:block">
+                          {w.points.toLocaleString()}
+                        </div>
+                        <div className="col-span-1 hidden items-center justify-end gap-1 text-right sm:flex"></div>
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           </div>

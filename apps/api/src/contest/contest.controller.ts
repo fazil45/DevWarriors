@@ -9,8 +9,7 @@ import {
   LeaderboardSchema,
 } from "@repo/zodschema";
 import { type Request, Response } from "express";
-import { validateUserSubmission } from "../service/gemini-client";
-import { getProblemCached } from "@repo/redis";
+
 
 export const createContests = async (req: Request, res: Response) => {
   try {
@@ -95,12 +94,6 @@ export const getActiveContests = async (req: Request, res: Response) => {
 
 export const getContests = async (req: Request, res: Response) => {
   try {
-    const userId = req.userId;
-
-    if (!userId) {
-      return res.status(403).json({ success: false, error: "Unauthenticated" });
-    }
-
     const allContest = await prisma.contest.findMany({
       select: {
         id: true,
@@ -214,10 +207,11 @@ export const getContestLeaderboard = async (req: Request, res: Response) => {
   const topPlayers = await getTopPlayers(contestId);
 
   if (topPlayers.length === 0) {
-    return res
-      .status(404)
-      .json({ success: false, error: "Leaderboard not available" });
-  }
+  return res.status(200).json({
+    empty: true,
+    message: "No submissions yet — be the first to solve a challenge!",
+  });
+}
 
   const userIds = topPlayers.map((p) => p.userId);
   const users = await prisma.user.findMany({

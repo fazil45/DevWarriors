@@ -31,7 +31,7 @@ const Developer = () => {
       });
 
       if (response.data.success) {
-        setContest(response.data.activeContest);
+        setContest(response.data.allContest);
       } else {
         toast.error(response.data.error);
       }
