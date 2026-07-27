@@ -300,6 +300,33 @@ export const deleteContest = async (req: Request, res: Response) => {
   }
 };
 
+export const getMyContestStatus = async (req: Request, res: Response) => {
+  const userId = req.userId;
+  const parsedParamsData = contestIdParams.safeParse(req.params)
+  if (!parsedParamsData.success) {
+    return res.status(403).json({
+      success:false,
+      error:parsedParamsData.error
+    })
+  }
+  const contestId = parsedParamsData.data.contestId
+
+  if (!userId) {
+    return res.status(403).json({ success: false, error: "Unauthenticated" });
+  }
+
+  const entry = await prisma.leaderboard.findUnique({
+    where: { contestId_userId: { contestId, userId } },
+    select:{points:true},
+  });
+
+  res.status(200).json({
+    success: true,
+    hasSubmitted: !!entry,
+    points: entry?.points ?? 0,
+  });
+};
+
 export const submitContest = async (req: Request, res: Response) => {
   try {
     const parsedContestParamsData = contestIdParams.safeParse(req.params);

@@ -14,10 +14,12 @@ const ai = new GoogleGenAI({
 
 export const validateUserSubmission = async ({
   problem,
+  maxPoints,
   problemPrompt,
   submission,
 }: {
-  problem:string
+  problem:string;
+  maxPoints:number;
   problemPrompt: string;
   submission: string;
 }) => {
@@ -45,9 +47,9 @@ ${submission}
 SCORING
 ========================
 
-Total: 100 points
+Total: ${maxPoints}
 
-1. CODE QUALITY (10-40)
+1. CODE QUALITY (10%-40$)
 
 Evaluate:
 - Readable and well-organized code
@@ -56,7 +58,7 @@ Evaluate:
 - Comments only where they improve understanding
 - Avoidance of obvious anti-patterns, unnecessary complexity, duplicated logic, and dead code
 
-2. CORRECTNESS (10-60)
+2. CORRECTNESS (10%-60%)
 
 Evaluate:
 - Does the solution solve the requested problem?
@@ -102,16 +104,18 @@ Respond with ONLY valid JSON.
 {
   "codeQualityScore": 0,
   "correctnessScore": 0,
+  "maxPoints": ${maxPoints},
   "totalScore": 0,
   "reasoning": ""
 }
 
 Rules:
-- codeQualityScore must be an integer from 10 to 40.
-- correctnessScore must be an integer from 10 to 60.
+- codeQualityScore must be an integer from 10% to 40% of ${maxPoints}.
+- correctnessScore must be an integer from 10% to 60% of ${maxPoints}.
 - totalScore must equal codeQualityScore + correctnessScore.
 - reasoning must be 2-3 concise sentences explaining the score with reference to the problem requirements.
-- If solution is more correctly written than asked in problem then reward extra point not deduct if it is correct. 
+- If solution is written correctly than asked in problem then reward extra point not deduct if it is correct. 
+- If javascript solution has types marked then gives extra marks not deduct. 
 `;
 
   // Use ai.models.generateContent for Gemini 2.5 Flash

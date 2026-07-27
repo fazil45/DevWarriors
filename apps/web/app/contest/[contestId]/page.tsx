@@ -8,6 +8,7 @@ import {
   ArrowLeftIcon,
   ArrowRight,
   Award,
+  CheckCircle2,
   Clock3,
   Code2,
   Crown,
@@ -42,13 +43,35 @@ interface Leaderboard {
 const Contest = () => {
   const params = useParams();
   const router = useRouter();
-  const contestId = params.contestId as string;
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
   const { data: user } = useCurrentUser();
   const isCreator = user?.role === "CREATOR";
+  const contestId = params.contestId as string;
+  const [loading, setLoading] = useState(true);
+  const [contestStatus, setContestStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
+
+  const getContestStatus = async (contestId: string) => {
+    try {
+      const response = await axios.get(
+        `${env.BACKEND_URL}/contest/status/${contestId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.success) {
+        setContestStatus(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.error || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -170,6 +193,7 @@ const Contest = () => {
   useEffect(() => {
     fetchChallengesInContest(contestId);
     getLeaderboard(contestId);
+    getContestStatus(contestId);
   }, []);
 
   return (
@@ -199,6 +223,11 @@ const Contest = () => {
             >
               Create Challenge
             </button>
+          ) : contestStatus ? (
+            <span className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-2 text-sm font-medium text-green-400">
+              <Trophy className="h-4 w-4" />
+              Completed
+            </span>
           ) : (
             <button
               onClick={() => handleSubmit()}
@@ -314,59 +343,73 @@ const Contest = () => {
             : challenges.map((item) => (
                 <div
                   key={item.id}
-                  className="group rounded-md border border-neutral-800 bg-neutral-900 p-6 transition-all duration-300 hover:border-orange-500/40 hover:-translate-y-1 hover:shadow-2xl/10 shadow-orange-400"
+                  className="group rounded-xl border border-neutral-800 bg-neutral-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-lg hover:shadow-orange-500/10"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-orange-500/10 text-orange-400">
-                        <Code2 className="h-5 w-5" />
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10 text-orange-400">
+                        <Code2 className="h-6 w-6" />
                       </div>
 
                       <div>
-                        <h2 className="text-lg font-semibold text-white group-hover:text-orange-400 transition-colors">
+                        <h2 className="text-lg font-semibold text-white transition-colors group-hover:text-orange-400">
                           {item.title}
                         </h2>
-                        <p className="text-sm text-neutral-500">
-                          {"Backend Challenge"}
+
+                        <p className="mt-1 text-sm text-neutral-500">
+                          Backend Engineering Challenge
                         </p>
                       </div>
                     </div>
 
-                    <div
-                      className={`rounded-md px-3 py-1 text-xs font-medium ${item.difficulty === "EASY" && "text-green-400 bg-green-500/10"} ${item.difficulty === "MEDIUM" && "text-yellow-400 bg-yellow-500/10"} ${item.difficulty === "HARD" && "text-red-400 bg-red-500/10"}`}
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        item.difficulty === "EASY"
+                          ? "bg-green-500/10 text-green-400"
+                          : item.difficulty === "MEDIUM"
+                            ? "bg-yellow-500/10 text-yellow-400"
+                            : "bg-red-500/10 text-red-400"
+                      }`}
                     >
                       {item.difficulty}
-                    </div>
+                    </span>
                   </div>
-                  <div className="mt-6 flex gap-3">
-                    <div className="flex items-center gap-2 rounded-lg bg-neutral-800 px-3 py-2">
-                      <Trophy className="h-4 w-4 text-yellow-400" />
-                      <span className="text-sm font-medium">
-                        {item.maxPoints * 10}
-                      </span>
+
+                  {/* Stats */}
+                  <div className="mt-6 grid grid-cols-3 gap-3">
+                    <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3 text-center">
+                      <Trophy className="mx-auto mb-2 h-4 w-4 text-yellow-400" />
+                      <p className="text-lg font-semibold text-white">
+                        {item.maxPoints}
+                      </p>
+                      <p className="text-xs text-neutral-500">Points</p>
                     </div>
 
-                    <div className="flex items-center gap-2 rounded-lg bg-neutral-800 px-3 py-2">
-                      <Clock3 className="h-4 w-4 text-blue-400" />
-                      <span className="text-sm">30 mins</span>
+                    <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3 text-center">
+                      <Clock3 className="mx-auto mb-2 h-4 w-4 text-blue-400" />
+                      <p className="text-lg font-semibold text-white">30m</p>
+                      <p className="text-xs text-neutral-500">Estimate</p>
                     </div>
                   </div>
 
                   {/* Footer */}
-                  <div className="mt-6 flex items-center justify-between border-t border-neutral-800 pt-4">
+                  <div className="mt-6 flex items-center justify-between border-t border-neutral-800 pt-5">
                     <span className="text-sm text-neutral-500">
-                      Start solving
+                      Ready to solve?
                     </span>
 
-                    <div className="flex items-center justify-center gap-3">
+                    <div className="flex items-center gap-3">
                       {isCreator && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDelete({ contestId, challengeId: item.id });
+                            handleDelete({
+                              contestId,
+                              challengeId: item.id,
+                            });
                           }}
-                          className="rounded-md border border-red-500/20 bg-red-500/50 p-2 text-red-400  transition-all duration-200 hover:bg-red-500 hover:text-white cursor-pointer"
-                          title="Delete Challenge"
+                          className="rounded-lg border border-red-500/20 bg-red-500/10 p-2 text-red-400 transition hover:bg-red-500 hover:text-white"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -376,7 +419,7 @@ const Contest = () => {
                         onClick={() =>
                           router.push(`/contest/${contestId}/${item.id}`)
                         }
-                        className="flex items-center gap-2 rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-orange-400"
+                        className="flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 font-medium text-black transition hover:bg-orange-400"
                       >
                         Solve
                         <ArrowRight className="h-4 w-4" />

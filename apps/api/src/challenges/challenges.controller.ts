@@ -228,12 +228,15 @@ export const submitIndependentChallenges = async (
       .json({ success: false, error: "challenge not found" });
   }
 
+  const maxPoints = challenge.maxPoints
+
   const problemPrompt = challenge.challengePrompt;
 
   const noctionDocId = await getProblemCached(challenge?.notionDocId!);
 
   const result = await validateUserSubmission({
     problem: noctionDocId,
+    maxPoints,
     submission,
     problemPrompt,
   });

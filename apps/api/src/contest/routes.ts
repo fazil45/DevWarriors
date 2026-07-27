@@ -7,6 +7,7 @@ import {
   getContestCreatedByDeveloper,
   getContestLeaderboard,
   getContests,
+  getMyContestStatus,
   submitContest,
 } from "./contest.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
@@ -16,11 +17,12 @@ router.get("/active", getActiveContests);
 router.get("/all", getContests);
 
 router.use(authMiddleware);
-router.delete("/delete/:contestId",authMiddleware, deleteContest);
-router.post("/createContest",authMiddleware, createContests);
+router.delete("/delete/:contestId", authMiddleware, deleteContest);
+router.post("/createContest", authMiddleware, createContests);
 
 router.get("/createdContest", getContestCreatedByDeveloper);
 router.get("/:contestId", getContestById);
+router.get("/status/:contestId", getMyContestStatus);
 router.post("/submit/:contestId", submitContest);
 router.get("/leaderboard/:contestId", getContestLeaderboard);
 

@@ -6,6 +6,7 @@ export interface SubmissionResult {
   codeQualityScore: number;
   correctnessScore: number;
   totalScore: number;
+  maxPoints:number;
   reasoning: string;
 }
 
@@ -92,7 +93,7 @@ function SubmissionResultModal({
                 strokeLinecap="round"
                 className={ringColor}
                 strokeDasharray={2 * Math.PI * 42}
-                strokeDashoffset={2 * Math.PI * 42 * (1 - percentage / 100)}
+                strokeDashoffset={2 * Math.PI * 42 * (1 - percentage / result.maxPoints)}
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -112,7 +113,7 @@ function SubmissionResultModal({
               <div className="bg-zinc-800 rounded-lg px-4 py-3 text-center">
                 <p className="text-xs text-zinc-500 mb-1">Code Quality</p>
                 <p className="text-lg font-semibold text-white">
-                  {result.codeQualityScore}/40
+                  {result.codeQualityScore/result.maxPoints}
                 </p>
               </div>
             )}
@@ -120,7 +121,7 @@ function SubmissionResultModal({
               <div className="bg-zinc-800 rounded-lg px-4 py-3 text-center">
                 <p className="text-xs text-zinc-500 mb-1">Correctness</p>
                 <p className="text-lg font-semibold text-white">
-                  {result.correctnessScore}/60
+                  {result.correctnessScore/result.maxPoints}
                 </p>
               </div>
             )}
