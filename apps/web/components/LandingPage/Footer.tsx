@@ -47,7 +47,7 @@ export default function Footer() {
           {cols.map((col) => (
             <div key={col.title}>
               <h4 className="text-sm font-semibold text-white">{col.title}</h4>
-              <ul className="mt-4 space-y-2.5">
+              <ul className="lg:mt-4 lg:space-y-2.5 flex lg:flex-col gap-4">
                 {col.links.map((l) => (
                   <li key={l}>
                     <a

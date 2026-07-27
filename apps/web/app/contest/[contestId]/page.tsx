@@ -184,7 +184,7 @@ const Contest = () => {
       )}
 
       <main className="mx-auto w-full max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between lg:mt-4 mt-12">
           <a
             onClick={() => router.back()}
             className="flex items-center justify-start gap-2 group cursor-pointer"
@@ -195,7 +195,7 @@ const Contest = () => {
           {isCreator ? (
             <button
               onClick={() => setShowModal(true)}
-              className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
+              className="font-medium  bg-orange-500 px-2 text-xs lg:text-md rounded-md h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
             >
               Create Challenge
             </button>
@@ -213,7 +213,7 @@ const Contest = () => {
           )}
         </div>
         <div className="mt-4">
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-2xl lg:text-4xl font-bold mb-4">
             {loading ? (
               <Skeleton
                 width={"10%"}
@@ -233,10 +233,10 @@ const Contest = () => {
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-300">
                   Leaderboard
                 </span>
-                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                <h2 className="mt-4 font-display text-xl lg:text-3xl font-bold tracking-tight text-white sm:text-4xl">
                   The top warriors
                 </h2>
-                <p className="mt-3 max-w-xl text-slate-400">
+                <p className="mt-3 max-w-xl text-sm lg:text-lg text-slate-400">
                   Ranking points are earned by solving challenges and placing in
                   contests.
                 </p>
@@ -296,7 +296,7 @@ const Contest = () => {
         <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-300 my-4">
           Challenges
         </span>
-        <div className="grid grid-cols-3 gap-4 m-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 m-4">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
                 <div key={i}>

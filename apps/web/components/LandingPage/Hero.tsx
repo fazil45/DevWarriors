@@ -26,11 +26,14 @@ export default function Hero() {
             Contest season now live
           </span>
 
-          <h1 className="mt-6 font-mono flex flex-col items-center justify-center lg:text-9xl  font-bold leading-28 tracking-tighter text-white sm:text-6xl">
-            <span className="flex gap-x-6">
-              Where <span className="text-orange-500">coders</span> become
+          <h1 className="mt-6 flex flex-col items-center font-mono font-bold tracking-tight text-white ">
+            <span className="flex items-center justify-center gap-2 sm:gap-3 text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-tight">
+              <span>Where</span>
+              <span className="text-orange-500">coders</span>
+              <span>become</span>
             </span>
-            <span className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+
+            <span className="mt-2 text-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-tight">
               warriors
             </span>
           </h1>

@@ -94,19 +94,19 @@ const Creator = () => {
           />
         )}
         <div>
-          <h1 className="text-4xl font-semibold mb-3">My Contests</h1>
-          <h4 className="text-md font-normal">
+          <h1 className="text-2xl lg:text-4xl font-semibold mb-3">My Contests</h1>
+          <h4 className="text-sm lg:text-md font-normal">
             Create contests and manage their challenges.
           </h4>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="font-medium  bg-orange-500 px-2 text-md rounded-lg h-fit py-2 cursor-pointer  hover:bg-orange-400  transition-colors ease-in-out"
+          className="font-medium bg-orange-500 px-2 text-xs lg:text-md rounded-md h-fit  lg:py-2 cursor-pointer hover:bg-orange-400  transition-colors ease-in-out"
         >
           Create Contest
         </button>
       </div>
-      <section className="grid grid-cols-3 gap-5">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
               <div key={i}>
