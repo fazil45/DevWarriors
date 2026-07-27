@@ -24,13 +24,13 @@ const warriors = [
   },
   {
     rank: 5,
-    name: "binaryPhoenix",
+    username: "devKing",
     points: 15,
   },
   {
     rank: 6,
     username: "cipherWolf",
-    points: 15110,
+    points: 15,
   },
 ];
 

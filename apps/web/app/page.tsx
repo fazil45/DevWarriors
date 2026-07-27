@@ -7,13 +7,16 @@ import CTA from "../components/LandingPage/CTA";
 import Footer from "../components/LandingPage/Footer";
 import RoleModal from "../components/Modal/RoleModal";
 import { useModal } from "../store/showModal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SideBar from "../components/SideBar";
+import { useSideBar } from "../store/showSideBar";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+
   useEffect(() => {
     const sections = gsap.utils.toArray<HTMLElement>(".fade-section");
 
@@ -33,6 +36,8 @@ export default function Home() {
     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
   }, []);
   const { showModal } = useModal();
+  const { showSideBar } = useSideBar()
+
   return (
     <div className="min-h-screen bg-neutral-900 scrollbar-none scroll-auto">
       <div className="pointer-events-none fixed left-0 top-1 h-75 w-150 -translate-x-1/2 rounded-full bg-blue-500/30 blur-[350px]" />
@@ -41,6 +46,9 @@ export default function Home() {
         className={`z-100 w-full h-full flex items-center justify-center ${showModal ? "flex" : "hidden"}`}
       >
         <RoleModal />
+      </div>
+      <div className={`${showSideBar ? "block" : "hidden"} `}>
+        <SideBar />
       </div>
       <div className={`${showModal ? "hidden" : "block"}`}>
         <main>

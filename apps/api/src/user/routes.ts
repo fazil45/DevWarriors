@@ -1,5 +1,5 @@
 import expres, { Router } from "express"
-import { checkUsername, me, register, resendOTP, signin, verifyOtp } from "./auth"
+import { checkUsername, me, register, resendOTP, signin, signout, verifyOtp } from "./auth"
 import { requestLimiter } from "../middleware/rate-limit"
 import { authMiddleware } from "../middleware/auth.middleware"
 const router:Router= expres.Router()
@@ -10,5 +10,6 @@ router.post("/resend-otp",requestLimiter, resendOTP)
 router.post("/signin",requestLimiter, signin)
 router.get("/checkUsername", checkUsername)
 router.get("/me",authMiddleware, me)
+router.post("/signout",authMiddleware, signout)
 
 export default router

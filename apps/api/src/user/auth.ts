@@ -1,4 +1,4 @@
-import { type Response, CookieOptions, Request } from "express";
+import { type Response, Request } from "express";
 import {
   LoginSchema,
   OTPVerificationSchema,
@@ -261,7 +261,7 @@ export const resendOTP = async (req: Request, res: Response) => {
   }
 };
 
-export const signin = async (req: Request, res: Response) => {
+export const signin = async (req: Request, res: Response) => {  
   try {
     const parsedLoginData = LoginSchema.safeParse(req.body);
 
@@ -379,4 +379,11 @@ export const me = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ success: false, error: "Server error" });
   }
+};
+
+export const signout = async (req: Request, res: Response) => {
+  res.clearCookie("token").json({
+    success: true,
+    message: "Signout successfully",
+  });
 };

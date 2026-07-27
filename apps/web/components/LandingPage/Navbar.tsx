@@ -4,12 +4,14 @@ import { Swords, Menu, X, User2 } from "lucide-react";
 import { useModal } from "../../store/showModal";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "../../hooks/useAuth";
+import { useSideBar } from "../../store/showSideBar";
 
 export default function Navbar() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
   const [open, setOpen] = useState(false);
-  const { setShowModal, showModal } = useModal();
+  const { setShowModal } = useModal();
+  const { setShowSideBar } = useSideBar()
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,12 @@ export default function Navbar() {
             Dashboard
           </a>
           {user ? (
-            <User2 className="md:block hidden" />
+            <div>
+              <User2
+                className="md:block hidden cursor-pointer "
+                onClick={() => setShowSideBar() }
+              />
+            </div>
           ) : (
             <div className="hidden items-center gap-3 md:flex">
               <a

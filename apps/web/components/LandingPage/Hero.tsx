@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRight, Flame, Trophy, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import RoleModal from "../Modal/RoleModal";
 import { useModal } from "../../store/showModal";
 
@@ -42,17 +42,17 @@ export default function Hero() {
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href="#contests"
+              href="/contest"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-orange-400 to-orange-600 px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:from-orange-300 hover:to-orange-500 hover:-translate-y-0.5 active:translate-y-0 group"
             >
               Enter the arena
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
             </a>
             <a
-              href="#challenges"
+              href="/dashboard"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10 hover:-translate-y-0.5"
             >
-              Browse challenges
+              Browse contest
             </a>
           </div>
         </div>
