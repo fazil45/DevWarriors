@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { formatDate, getContestStatus } from "../../config/util";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useContestStatus } from "../../store/contestStatus";
 
 interface Contest {
   id: string;
@@ -22,6 +23,7 @@ interface Contest {
 const Developer = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const { isContestSubmitted } = useContestStatus();
   const [contest, setContest] = useState<Contest[]>([]);
 
   const fetchContest = async () => {
@@ -93,6 +95,8 @@ const Developer = () => {
                   endTime: item.endTime,
                 });
 
+                const isSubmitted = isContestSubmitted(item.id);
+
                 return (
                   <div
                     key={item.id}
@@ -134,20 +138,28 @@ const Developer = () => {
                         🏆 {item._count.contestToChallengeMapping * 100} Points
                       </div>
 
-                      <button
-                        onClick={() => router.push(`/contest/${item.id}`)}
-                        className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
-                          contest.status === "ENDED"
-                            ? "cursor-not-allowed bg-neutral-800 text-neutral-500"
-                            : "text-orange-400 hover:bg-orange-500 hover:text-black hover:scale-105"
-                        }`}
-                        disabled={contest.status === "ENDED"}
-                      >
-                        {contest.status === "ENDED" ? "Finished" : "Enter"}
-                        {contest.status !== "ENDED" && (
-                          <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                        )}
-                      </button>
+                      {isSubmitted ? (
+                        <button
+                          className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 bg-green-500 text-white`}
+                        >
+                          Completed
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => router.push(`/contest/${item.id}`)}
+                          className={`flex items-center justify-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                            contest.status === "ENDED"
+                              ? "cursor-not-allowed bg-neutral-800 text-neutral-500"
+                              : "text-orange-400 hover:bg-orange-500 hover:text-black hover:scale-105"
+                          }`}
+                          disabled={contest.status === "ENDED"}
+                        >
+                          {contest.status === "ENDED" ? "Ended" : "Enter"}
+                          {contest.status !== "ENDED" && (
+                            <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

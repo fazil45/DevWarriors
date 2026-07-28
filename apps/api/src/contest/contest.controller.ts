@@ -45,7 +45,7 @@ export const createContests = async (req: Request, res: Response) => {
       contestId: contest.id,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ success: false, error });
   }
 };
@@ -188,7 +188,7 @@ export const getContestById = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, contest: contest });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ success: false, error });
   }
 };
@@ -396,7 +396,7 @@ export const submitContest = async (req: Request, res: Response) => {
       message: "Contest Submitted successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ success: false, error });
   }
 };

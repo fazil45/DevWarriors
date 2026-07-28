@@ -9,9 +9,7 @@ import { type Request, Response } from "express";
 import { validateUserSubmission } from "../service/gemini-client";
 import { getProblemCached } from "@repo/redis";
 
-type Difficulty = "EASY" | "MEDIUM" | "HARD"
-
-
+type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
 export const createChallenges = async (req: Request, res: Response) => {
   try {
@@ -27,12 +25,15 @@ export const createChallenges = async (req: Request, res: Response) => {
       return res.status(403).json({ success: false, error: "Invalid inputs" });
     }
 
-    console.log(parsedChallengeData.error)    
-    console.log(parsedChallengeData)    
-
-
-    const { contestId, index, maxPoints, notionDocId, title, challengePrompt,difficulty } =
-      parsedChallengeData.data;
+    const {
+      contestId,
+      index,
+      maxPoints,
+      notionDocId,
+      title,
+      challengePrompt,
+      difficulty,
+    } = parsedChallengeData.data;
 
     const challenge = await prisma.$transaction(async (tx) => {
       return tx.challenge.create({
@@ -59,7 +60,7 @@ export const createChallenges = async (req: Request, res: Response) => {
       challenge: challenge,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.json({ error });
   }
 };
@@ -84,7 +85,7 @@ export const getChallengeInContest = async (req: Request, res: Response) => {
         id: true,
         title: true,
         maxPoints: true,
-        difficulty:true,
+        difficulty: true,
         contestToChallengeMapping: {
           select: {
             contest: {
@@ -228,7 +229,7 @@ export const submitIndependentChallenges = async (
       .json({ success: false, error: "challenge not found" });
   }
 
-  const maxPoints = challenge.maxPoints
+  const maxPoints = challenge.maxPoints;
 
   const problemPrompt = challenge.challengePrompt;
 
@@ -253,4 +254,3 @@ export const submitIndependentChallenges = async (
     result: result,
   });
 };
-

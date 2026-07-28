@@ -10,7 +10,6 @@ import { useModal } from "../store/showModal";
 import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SideBar from "../components/SideBar";
 import { useSideBar } from "../store/showSideBar";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -36,7 +35,6 @@ export default function Home() {
     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
   }, []);
   const { showModal } = useModal();
-  const { showSideBar } = useSideBar()
 
   return (
     <div className="min-h-screen bg-neutral-900 scrollbar-none scroll-auto">
@@ -47,9 +45,7 @@ export default function Home() {
       >
         <RoleModal />
       </div>
-      <div className={`${showSideBar ? "block" : "hidden"} `}>
-        <SideBar />
-      </div>
+
       <div className={`${showModal ? "hidden" : "block"}`}>
         <main>
           <section className="fade-section">

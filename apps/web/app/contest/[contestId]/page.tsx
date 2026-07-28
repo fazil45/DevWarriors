@@ -21,6 +21,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useCurrentUser } from "../../../hooks/useAuth";
 import CreateChallengeModal from "../../../components/Modal/CreateChallengeModal";
+import { useContestStatus } from "../../../store/contestStatus";
 
 interface Challenge {
   id: string;
@@ -47,10 +48,11 @@ const Contest = () => {
   const isCreator = user?.role === "CREATOR";
   const contestId = params.contestId as string;
   const [loading, setLoading] = useState(true);
-  const [contestStatus, setContestStatus] = useState(false);
+  const { isContestSubmitted, setSubmitted } = useContestStatus();
   const [showModal, setShowModal] = useState(false);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
+  const isSubmitted = isContestSubmitted(contestId);
 
   const getContestStatus = async (contestId: string) => {
     try {
@@ -62,7 +64,7 @@ const Contest = () => {
       );
 
       if (response.data.success) {
-        setContestStatus(true);
+        setSubmitted(contestId, true);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -84,6 +86,7 @@ const Contest = () => {
 
       if (response.data.success) {
         toast.success(response.data.success);
+        setSubmitted(contestId, true);
         window.location.reload();
       } else {
         toast.error(response.data.error);
@@ -223,8 +226,8 @@ const Contest = () => {
             >
               Create Challenge
             </button>
-          ) : contestStatus ? (
-            <span className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-2 text-sm font-medium text-green-400">
+          ) : isSubmitted ? (
+            <span className="flex items-center gap-2 rounded-md bg-green-500/10 border border-green-500/20 px-4 py-2 text-sm font-medium text-green-400">
               <Trophy className="h-4 w-4" />
               Completed
             </span>
