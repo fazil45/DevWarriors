@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { Suspense, use, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios, { Axios } from "axios";
 import { useForm } from "@tanstack/react-form";
@@ -77,6 +77,7 @@ const Signup = () => {
             {`Create your account as ${role}`}
           </h1>
           <div>
+            <Suspense fallback={<div>Loading...</div>}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -246,6 +247,7 @@ const Signup = () => {
                 </Button>
               </div>
             </form>
+            </Suspense>
           </div>
         </div>
       </div>
